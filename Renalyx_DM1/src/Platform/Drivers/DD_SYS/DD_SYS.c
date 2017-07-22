@@ -31,17 +31,19 @@ extern uint8_t DD_EN_PERI_AND_SET_PIO(pio_type peripheral,uint32_t pio);
 
 uint8_t DD_SET_VALVE_1_16_IO(void);
 uint8_t DD_SET_VALVE_17_20_IO(void);
-uint8_t DD_SET_VALVE_16_20_IO(void);
+uint8_t DD_SET_VALVE_21_32_IO(void);                // for resetting Alarm Lights
+
 uint8_t DD_LATCH_STROBE_X1_X16(void);
 uint8_t DD_LATCH_STROBE_X17_X20(void);
 
 
-uint8_t DD_RESET_VALVE_1_16_IO(void);
-uint8_t DD_RESET_VALVE_17_20_IO(void);
-uint8_t DD_RESET_VALVE_17_20_IO(void);
+//uint8_t DD_RESET_VALVE_1_16_IO(void);
+//uint8_t DD_RESET_VALVE_17_20_IO(void);
+//uint8_t DD_RESET_VALVE_21_32_IO(void);                // for resetting Alarm Lights
 
 static uint16_t dd_valve_port_1_16 = 0 ;
-static uint16_t dd_valve_port_17_32 = 0 ;
+static uint16_t dd_valve_port_17_20 = 0 ;
+static uint16_t dd_valve_port_21_32 = 0 ;
 
 static bool ByPass = 0 , LoopBack = 0;
 
@@ -564,7 +566,7 @@ uint8_t DD_SET_VALVE(sv_valvetype id_valve)
 	   else	if((id_valve >=17) && (id_valve <= VALVE_MAX))
 		{
 
-					dd_valve_port_17_32 |= 1 << id_valve - 17;         // Earlier 6
+					dd_valve_port_17_20 |= 1 << id_valve - 17;         // Earlier 6
 
 					DD_SET_VALVE_17_20_IO();
 
@@ -573,8 +575,8 @@ uint8_t DD_SET_VALVE(sv_valvetype id_valve)
 		
 		else if ((id_valve >=29) && (id_valve <= 32))                                  // for alarm indicators
 		{
-			dd_valve_port_17_32 |= 1 << id_valve - 17;
-			DD_SET_VALVE_17_20_IO();
+			dd_valve_port_21_32 |= 1 << id_valve - 17;
+			DD_SET_VALVE_21_32_IO();
 			DD_LATCH_STROBE_X17_X20();
 		}
 				
@@ -603,7 +605,7 @@ uint8_t DD_RESET_VALVE(sv_valvetype id_valve)
 
 	else if((id_valve >=17) && (id_valve <= VALVE_MAX))
 	{
-		dd_valve_port_17_32 = dd_valve_port_17_32 &= ~(1 << id_valve - 17);
+		dd_valve_port_17_20 = dd_valve_port_17_20 &= ~(1 << id_valve - 17);
 		DD_SET_VALVE_17_20_IO();
 		DD_LATCH_STROBE_X17_X20();
 		
@@ -611,8 +613,8 @@ uint8_t DD_RESET_VALVE(sv_valvetype id_valve)
 	
 	else if ((id_valve >=29) && (id_valve <= 32))                                  // for alarm indicators
 	{
-		dd_valve_port_17_32 = dd_valve_port_17_32 &= ~(1 << id_valve - 17);
-		DD_SET_VALVE_17_20_IO();
+		dd_valve_port_21_32 = dd_valve_port_21_32 &= ~(1 << id_valve - 17);
+		DD_SET_VALVE_21_32_IO();
 		DD_LATCH_STROBE_X17_X20();
 	}
 
@@ -737,8 +739,8 @@ uint8_t DD_SET_VALVE_1_16_IO()
 uint8_t DD_SET_VALVE_17_20_IO()
 {
 		uint8_t count = 17;
-	uint32_t p_io, peri;
-		while (count <= 32)
+		uint32_t p_io, peri;
+		while (count <= 20)  // 32
 		{
 			switch (count)
 			{
@@ -763,28 +765,28 @@ uint8_t DD_SET_VALVE_17_20_IO()
 					peri = PC;
 					break;
 				
-					case ALARM_BUZZER:
-					p_io = 13;
-					peri = PC;
-					break;
-					case ALARM_RED:
-					p_io = 14;
-					peri = PC;
-					break;
-					case ALARM_AMBER:
-					p_io = 15;
-					peri = PC;
-					break;
-				
-					case ALARM_GREEN:
-					p_io = 16;
-					peri = PC;
-					break;
+// 					case ALARM_BUZZER:
+// 					p_io = 13;
+// 					peri = PC;
+// 					break;
+// 					case ALARM_RED:
+// 					p_io = 14;
+// 					peri = PC;
+// 					break;
+// 					case ALARM_AMBER:
+// 					p_io = 15;
+// 					peri = PC;
+// 					break;
+// 				
+// 					case ALARM_GREEN:
+// 					p_io = 16;
+// 					peri = PC;
+// 					break;
 				
 					default:
 					break;
 			}
-					if (dd_valve_port_17_32 & 1<< count-17 )
+					if (dd_valve_port_17_20 & 1<< count-17 )
 	
 					{
 
@@ -800,6 +802,57 @@ uint8_t DD_SET_VALVE_17_20_IO()
 	
 	return 0;
 }
+
+uint8_t DD_SET_VALVE_21_32_IO()
+{
+	uint8_t count = 29;
+	uint32_t p_io, peri;
+	while (count <= 32)  // 32
+	{
+		switch (count)
+		{
+			
+			
+			case ALARM_BUZZER:
+			p_io = 13;
+			peri = PC;
+			break;
+			case ALARM_RED:
+			p_io = 14;
+			peri = PC;
+			break;
+			case ALARM_AMBER:
+			p_io = 15;
+			peri = PC;
+			break;
+			
+			case ALARM_GREEN:
+			p_io = 16;
+			peri = PC;
+			break;
+			
+			default:
+			break;
+		}
+		if (dd_valve_port_21_32 & 1<< count-17 )
+		
+		{
+
+			DD_RESET_PIO(peri,p_io);
+		}
+		else
+		{
+			DD_SET_PIO(peri,p_io);
+		}
+		
+		count++;
+	}
+	
+	return 0;
+	
+}
+
+
 
 
 uint8_t DD_SET_CLAMP()		// Venous Clamp

@@ -59,12 +59,13 @@ extern float res_temp_value;
 
 
 // New definitions for Heater Control
-static uint16_t count_500ms = 0,stability_count = 0,TS2_stability_count = 0, count_at_PastTS2 = 0, iterations = 0, wait_4_TS2Stability = 180, wait_4_stability = 240;
+static uint16_t count_500ms = 0,stability_count = 0,TS2_stability_count = 0, count_at_PastTS2 = 0, iterations = 0, wait_4_TS2Stability = 180, wait_4_stability = 240, post_stability_count =0, TS3_post_stability_count =0;
 
 float Tmp2Val_prev =0, Tmp3Val_prev,Past_TS2 =0,TS2_slope = 0;
 float Prescribed_T2 = 37;
 float Prescribed_T3 = 37;
 // uint16_t SYSTEM_FLOW = 500;
+ Cl_Uint32Type SYSTEM_FLOW = 300;					// Gopal:  will get the system flow rate from the user
 uint8_t TS3_Direction, TS2_Direction,duty_count = 0;
 extern Cl_Uint32Type Treatdata[ID_MAX_TREAT_PARAM] ;
 int16_t Heat_Correction(void);
@@ -79,8 +80,24 @@ void Calculate_slope (void);
 void Calculate_direction(void);
 void DataDisplay(void);
 
+
+#define TS2_SLOPE1  0.03
 #define TS2_SLOPE2  0.3
-#define  TS2_SLOPE1  0.03
+#define TS2_SLOPE3  0.5
+#define TS2_SLOPE4  0.8
+#define WAIT_4_TS2STABILITY_300  240
+#define WAIT_4_TS2STABILITY_500  180
+#define WAIT_4_TS3STABILITY_300  180
+#define WAIT_4_TS3STABILITY_500  180
+#define WAIT_4_STABILITY_300	 180
+#define WAIT_4_STABILITY_500	 180
+#define TS2_STABILITY_COUNT_300  30
+#define TS2_STABILITY_COUNT_500  30
+#define TS3_STABILITY_COUNT_300  60
+#define TS3_STABILITY_COUNT_500  60
+#define PRESCRIBED_TS2_300		 40
+#define PRESCRIBED_TS2_500		 37
+
 
 Cl_ReturnCodeType Cl_Heater_GetHeaterStableStatus(Cl_BoolType* Stable)
 {
@@ -199,13 +216,33 @@ Cl_ReturnCodeType SetHeaterState(HeaterStateType Param_HeaterState)
 
  	//	 avg_duty = 2500;
 	 
-	 Cl_Uint32Type SYSTEM_FLOW = Treatdata[ID_dflow];					// Gopal:  will get the system flow rate from the user
+//	 Cl_Uint32Type SYSTEM_FLOW = Treatdata[ID_dflow];					// Gopal:  will get the system flow rate from the user
 		  SYSTEM_FLOW = 300;											// Gopal: this shouldnot be hard coded... Flow rate from UI should be loaded to SYSTEM FLOW
+	//	  Treatdata[ID_dflow] = 300; 
 		  
-		  avg_duty = 2200;
-		  if (Tmp1Val <= 26 || SYSTEM_FLOW == 300 )                   // Gopal: if initial inlet temperature in less than 26 or flow rate is 300 then avg duty is 2400
+		  if (SYSTEM_FLOW == 300 )                   // Gopal: if initial inlet temperature in less than 26 or flow rate is 300 then avg duty is 2400
 		  {
-			  avg_duty = 2400;
+			  avg_duty = 2500;
+			 
+			  wait_4_TS2Stability = WAIT_4_TS2STABILITY_300;
+			  wait_4_stability = WAIT_4_STABILITY_300;
+			  post_stability_count = TS2_STABILITY_COUNT_300;
+			  TS3_post_stability_count = TS3_STABILITY_COUNT_300;
+			  Prescribed_T2 = PRESCRIBED_TS2_300;
+		  }
+		  else if (SYSTEM_FLOW == 500)
+		  {
+			  avg_duty = 2200;
+			  if (Tmp1Val <= 26)
+			  {
+				  avg_duty = 2400;
+			  }
+			  wait_4_TS2Stability = WAIT_4_TS2STABILITY_500;
+			  wait_4_stability = WAIT_4_STABILITY_500;
+			  post_stability_count =  TS2_STABILITY_COUNT_500;
+			  TS3_post_stability_count = TS3_STABILITY_COUNT_500;
+			  Prescribed_T2 = PRESCRIBED_TS2_500;
+			  
 		  }
 		 //avg_duty_bak = avg_duty;
 		 
@@ -345,14 +382,35 @@ int16_t Heat_Correction()
 	  increased if temperature is decreasing.
 	*/
 	TS2_Stable = Check_4_TS2_Stable();
-	if ((Tmp2Val >=37.5)  && (Tmp3Val <= 32))      // Restricting forced coarse correction only at the beginning and any time TS3 falls below 32
+	
+	if (SYSTEM_FLOW == 500)
 	{
-		if (!(count_500ms % 20))                  // force coarse correction if TS2 greater 39 and continues to remain for more than 1 sec
+		if ((Tmp2Val >=37.5)  && (Tmp3Val <= 32))      // Restricting forced coarse correction only at the beginning and any time TS3 falls below 32
 		{
-			Coarse_DutyCorrection(); 
+			if (!(count_500ms % 20))                  // force coarse correction if TS2 greater 39 and continues to remain for more than 1 sec
+			{
+				Coarse_DutyCorrection();
+			}
+			
 		}
-		
 	}
+	
+	if (SYSTEM_FLOW == 300)
+	{
+		if ((Tmp2Val >=41)  && (Tmp3Val <= 32))      // Restricting forced coarse correction only at the beginning and any time TS3 falls below 32
+		{
+			if (!(count_500ms % 20))                  // force coarse correction if TS2 greater 39 and continues to remain for more than 1 sec
+			{
+				Coarse_DutyCorrection();
+			}
+			
+		}
+	}
+	
+	
+	if (SYSTEM_FLOW == 300)
+	{
+		
 	if(TS2_Stable)
 	{
 		//Now TS2 is not rapidly increasing and is at certain Temperature +/- 2 deg. 
@@ -386,6 +444,47 @@ int16_t Heat_Correction()
 	  // TS2 not stable, wait for some more time
 	  // Same avg_duty is being applied, no change till stability not achieved
 	}	
+	}
+	
+	if (SYSTEM_FLOW == 500)
+	{
+		
+			if(TS2_Stable)
+	{
+		//Now TS2 is not rapidly increasing and is at certain Temperature +/- 2 deg. 
+		//Start tuning T2 to be at 37 +/- 2 deg.
+		if ( ((Tmp2Val - Prescribed_T2) > 1) || ((Prescribed_T2 - Tmp2Val) > 1) )
+		{
+			Coarse_DutyCorrection(); 
+		}
+		else 
+		{
+			//T2 is stable and within 37 +/- 2 deg, check for T3 stability and apply fine correction
+			TS3_Stable = Check_4_TS3_Stable();
+			if(TS3_Stable)
+			{
+			   if ( ((Tmp3Val - Prescribed_T3) > 0.1) || ((Prescribed_T3 - Tmp3Val) > 0.1) )
+			      Fine_DutyCorrection();
+			   else
+			   {
+				 // TS2, TS3 both are stable, keep applying same avg_duty	  
+			   }	
+			} 
+			else
+			{
+				//TS2 is stable, and is within 39 +/- 2 deg; TS3 is not stable yet.
+				//same avg_duty is applied and wait for some more time
+			}
+	   }
+	}
+	else
+	{
+	  // TS2 not stable, wait for some more time
+	  // Same avg_duty is being applied, no change till stability not achieved
+	}	
+	}
+	
+
 }
 
 bool Check_4_TS2_Stable()
@@ -404,8 +503,9 @@ bool Check_4_TS2_Stable()
 		{
 			ts2_stable = true;
 		}
-		wait_4_TS2Stability = 30;  // Sunil: to ensure new value if temp difference not in band and apply for next stability
-								 // Count 240 = 2 mins, Count 120 = 1 min
+		wait_4_TS2Stability = post_stability_count;  // Sunil: to ensure new value if temp difference not in band and apply for next stability
+													// Count 240 = 2 mins, Count 120 = 1 min
+													 // Gopal: 30
 		TS2_stability_count = 0;
 	}
 	return ts2_stable;
@@ -426,7 +526,8 @@ bool Check_4_TS3_Stable()
 		{
 			ts3_stable = true;
 		}
-		wait_4_stability = 60;  // Sunil: to ensure new value if temp difference not in band and apply for next stability
+		wait_4_stability = TS3_post_stability_count;   // Sunil: to ensure new value if temp difference not in band and apply for next stability
+		                                             // Gopal: 60
 								 // Count 240 = 2 mins, Count 120 = 1 min
 		stability_count = 0;
 	}
@@ -470,33 +571,72 @@ Coarse_DutyCorrection()                                  // to be fine tuned bas
 	}
 	
 	
-	if ((TS2_Direction == UP)  && (Tmp2Val >= 39) )   // if direction is upward restrict correction if TS2 not yet 39
+	if (SYSTEM_FLOW == 500)
 	{
-	
-		avg_duty = avg_duty - duty_count;
+		if ((TS2_Direction == UP)  && (Tmp2Val >= 39) )   // if direction is upward restrict correction if TS2 not yet 39
+		{
+			
+			avg_duty = avg_duty - duty_count;
+			
+			if (avg_duty <= 1000)
+			{
+				avg_duty = 1800;    // avoiding negATIVE values for the avg duty, which shouldnt happen in regular run
+			}
+		}
+		else if ((TS2_Direction == UP)  && ((Tmp2Val >= 36) && (Tmp2Val <= 37)))
+		{
+			avg_duty = avg_duty + duty_count;            //To avoid TS2 getting stuck at 36 or 36.5
+		}
+		else if ((TS2_Direction == DOWN) && (Tmp2Val <= 37) )
+		{
+			avg_duty = avg_duty + duty_count;
+			
+			if (avg_duty > 2300)  //Sunil limiting to 2300
+			{
+				avg_duty = 2300;
+				sv_cntrl_poweroffheater();
+				//			  HeaterState = CL_HEATER_STATE_OFF;
+			}
+		}
+		else if (TS2_Direction == NUETRAL)    //Sunil: This means TS2 is neither increasing nor decreasing
+		avg_duty = avg_duty;
 		
-		if (avg_duty <= 1000)  
-		 {
-			 avg_duty = 1800;    // avoiding negATIVE values for the avg duty, which shouldnt happen in regular run
-		 }		
 	}
-	else if ((TS2_Direction == UP)  && ((Tmp2Val >= 36) && (Tmp2Val <= 37)))
+	
+	else if (SYSTEM_FLOW == 300)
 	{
-		avg_duty = avg_duty + duty_count;            //To avoid TS2 getting stuck at 36 or 36.5
+		if ((TS2_Direction == UP)  && (Tmp2Val >= 41) )   // if direction is upward restrict correction if TS2 not yet 39
+		{
+			
+			avg_duty = avg_duty - duty_count;
+			
+			if (avg_duty <= 1000)
+			{
+				avg_duty = 1800;    // avoiding negATIVE values for the avg duty, which shouldnt happen in regular run
+			}
+		}
+		else if ((TS2_Direction == UP)  && ((Tmp2Val >= 37) && (Tmp2Val <= 39)))      // last was 40
+		{
+			avg_duty = avg_duty + duty_count;            //To avoid TS2 getting stuck at 36 or 36.5
+		}
+		else if ((TS2_Direction == DOWN) && (Tmp2Val <= 39) )        // last was 40
+		{
+			avg_duty = avg_duty + duty_count;
+			
+			if (avg_duty > 2500)  //Sunil limiting to 2300
+			{
+				avg_duty = 2500;
+				sv_cntrl_poweroffheater();
+				//			  HeaterState = CL_HEATER_STATE_OFF;
+			}
+		}
+		else if (TS2_Direction == NUETRAL)    //Sunil: This means TS2 is neither increasing nor decreasing
+		avg_duty = avg_duty;
+		
 	}
-	else if ((TS2_Direction == DOWN) && (Tmp2Val <= 37) )
-	{
-	  avg_duty = avg_duty + duty_count;
-	  
-	  if (avg_duty > 2300)  //Sunil limiting to 2300
-		  {
-			  avg_duty = 2300;
-			  sv_cntrl_poweroffheater();
-//			  HeaterState = CL_HEATER_STATE_OFF;
-		  }
-    }
-	else if (TS2_Direction == NUETRAL)    //Sunil: This means TS2 is neither increasing nor decreasing
-	    avg_duty = avg_duty;
+	
+	
+	
 }
 
 Fine_DutyCorrection()                                  // to be fine tuned based on further testing
@@ -513,32 +653,69 @@ Fine_DutyCorrection()                                  // to be fine tuned based
 	{
 		duty_count = 4;
 	}
-	if ((TS2_Direction == UP ) && (Tmp2Val >= 37.5) && (Tmp3Val >= 37.5))     // Gopal added TS3 check as to reduce duty if ts3 goes above 37.5
+	
+	if (SYSTEM_FLOW == 500)
 	{
-		avg_duty = avg_duty - duty_count;
-		
-		if (avg_duty <= 1000)
+		if ((TS2_Direction == UP ) && (Tmp2Val >= 37.5) && (Tmp3Val >= 37.5))     // Gopal added TS3 check as to reduce duty if ts3 goes above 37.5
 		{
-			avg_duty = 1800;    // avoiding negative values for the avg duty, which shouldn/t happen in regular run
+			avg_duty = avg_duty - duty_count;
+			
+			if (avg_duty <= 1000)
+			{
+				avg_duty = 1800;    // avoiding negative values for the avg duty, which shouldn/t happen in regular run
+			}
 		}
-	}
-	else if ((TS2_Direction == UP)  && ((Tmp2Val >= 35) && (Tmp2Val <= 38.5)) && (Tmp3Val <= 38) )  // Gopal added TS3 check as to increase duty if ts3 goes below 38
-	{
-		avg_duty = avg_duty + duty_count;            //To avoid TS2 getting stuck at 36 or 36.5
-	}
-	else if ((TS2_Direction == DOWN ) && (Tmp2Val <= 37.5) )
-	{
-		avg_duty = avg_duty + duty_count;
-		
-		if (avg_duty > 2300)  //Sunil limiting to 2300
+		else if ((TS2_Direction == UP)  && ((Tmp2Val >= 35) && (Tmp2Val <= 38.5)) && (Tmp3Val <= 38) )  // Gopal added TS3 check as to increase duty if ts3 goes below 38
 		{
-			avg_duty = 2300;
-			sv_cntrl_poweroffheater();
-//			HeaterState = CL_HEATER_STATE_OFF;
+			avg_duty = avg_duty + duty_count;            //To avoid TS2 getting stuck at 36 or 36.5
 		}
+		else if ((TS2_Direction == DOWN ) && (Tmp2Val <= 37.5) )
+		{
+			avg_duty = avg_duty + duty_count;
+			
+			if (avg_duty > 2300)  //Sunil limiting to 2300
+			{
+				avg_duty = 2300;
+				sv_cntrl_poweroffheater();
+				//			HeaterState = CL_HEATER_STATE_OFF;
+			}
+		}
+		else if (TS2_Direction == NUETRAL)    //Sunil: This means TS2 is neither increasing nor decreasing
+		avg_duty = avg_duty;
 	}
-	else if (TS2_Direction == NUETRAL)    //Sunil: This means TS2 is neither increasing nor decreasing 
-	avg_duty = avg_duty;
+	
+	
+	else if (SYSTEM_FLOW == 300)                                        // Gopal: if the flow rate is set to 300 temperature
+	{
+		if ((TS2_Direction == UP ) && (Tmp2Val >= 40.5) && (Tmp3Val >= 37.5))     // Gopal: added TS3 check as to reduce duty if ts3 goes above 37.5
+		{
+			avg_duty = avg_duty - duty_count;
+			
+			if (avg_duty <= 1000)
+			{
+				avg_duty = 1800;    // avoiding negative values for the avg duty, which shouldn/t happen in regular run
+			}
+		}
+		else if ((TS2_Direction == UP)  && ((Tmp2Val >= 38) && (Tmp2Val <= 40.5)) && (Tmp3Val <= 38) )  // Gopal added TS3 check as to increase duty if ts3 goes below 38
+		{                                            // 37
+			avg_duty = avg_duty + duty_count;            //To avoid TS2 getting stuck at 36 or 36.5
+		}
+		else if ((TS2_Direction == DOWN ) && (Tmp2Val <= 40.5) )  // 39.5
+		{
+			avg_duty = avg_duty + duty_count;
+			
+			if (avg_duty > 2500)  //Sunil limiting to 2300
+			{
+				avg_duty = 2500;
+				sv_cntrl_poweroffheater();
+				//			HeaterState = CL_HEATER_STATE_OFF;
+			}
+		}
+		else if (TS2_Direction == NUETRAL)    //Sunil: This means TS2 is neither increasing nor decreasing
+		avg_duty = avg_duty;
+	}
+	
+	
 }
 
 DataDisplay()

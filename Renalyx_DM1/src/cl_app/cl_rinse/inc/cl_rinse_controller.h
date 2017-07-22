@@ -176,10 +176,10 @@ typedef enum {
 
 #define CL_RINSE_PATH_BO2_V13V14_TIMEOUT 1
 
-#define CL_RINSE_TIMEOUT_MIN 8
+#define CL_RINSE_TIMEOUT_MIN 5
 #define CL_HOTRINSE_TIMEOUT_MIN 25
 #define CL_RINSE_TIMEOUT_HRS 0
-#define CL_RINSE_DURATION 8
+#define CL_RINSE_DURATION 5
 //prototype definitions of local functions
 Cl_ReturnCodeType Cl_Rinse_Controller(Cl_Mac_EventsType );
 
