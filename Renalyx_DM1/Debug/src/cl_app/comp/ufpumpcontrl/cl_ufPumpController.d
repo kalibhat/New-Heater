@@ -2,7 +2,7 @@ src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.d \
  src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.o: \
  ../src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.c \
  ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController_include.h \
- ../src/cl_app/inc/cl_types.h ../src/asf.h \
+ ../src/cl_app/cl_mac/inc/cl_mac_controller.h ../src/asf.h \
  ../src/ASF/sam/drivers/adc/adc.h ../src/ASF/sam/utils/compiler.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\lib\gcc\arm-none-eabi\5.3.1\include\stddef.h \
  ../src/ASF/common/utils/parts.h \
@@ -147,7 +147,7 @@ src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.d \
  ../src/ASF/common/services/twi/sam_twi/twi_master.h \
  ../src/ASF/common/services/twi/twi_slave.h \
  ../src/ASF/common/services/twi/sam_twi/twi_slave.h \
- ../src/ASF/sam/drivers/pio/pio_handler.h \
+ ../src/ASF/sam/drivers/pio/pio_handler.h ../src/cl_app/inc/cl_types.h \
  ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController.h \
  ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpFeedback.h \
  ../src/Platform/Service/sv_interface.h \
@@ -176,11 +176,51 @@ src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.d \
  ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController.h \
  ../src/cl_app/comp/ufpumpcontrl/ext/inc/cl_ufPumpFeedback_ext.h \
  ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpFeedback.h \
- ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController_proto.h
+ ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController_proto.h \
+ ../src/cl_app/cl_mac/ext/inc/cl_mac_controller_ext_.h \
+ ../src/sv_stubs/inc/sv_types.h ../src/sv_stubs/inc/sv_stub.h \
+ ../src/cl_app/comp/flowswitchcntrl/ext/inc/flowswitchcntrl_ext.h \
+ ../src/cl_app/comp/flowswitchcntrl/inc/flowswitchcntrl.h \
+ ../src/cl_app/cl_mac/inc/cl_mac_include.h ../src/cl_app/inc/cl_macros.h \
+ ../src/config/conf_board.h ../src/cl_app/cl_mac/inc/cl_mac_controller.h \
+ ../src/cl_app/cl_sys/cl_sys.h \
+ ../src/cl_app/comp/levelswichcntrl/inc/cl_level_switchcontroller.h \
+ ../src/cl_app/comp/deaeration/inc/cl_deaeration.h \
+ ../src/cl_app/cl_dprep/inc/cl_dprep_primecontroller.h \
+ ../src/cl_app/cl_alarms/inc/cl_alarmdetector.h \
+ ../src/cl_app/cl_alarms/inc/cl_alarmdetector.h \
+ ../src/cl_app/cl_console/ext/inc/cl_consolecontroller_ext.h \
+ ../src/cl_app/cl_dlsis/ext/inc/cl_dlsiscontroller_ext.h \
+ ../src/cl_app/cl_dlsis/inc/cl_dlsis_controller.h \
+ ../src/cl_app/cl_disinf/ext/inc/cl_disinfcontroller_ext.h \
+ ../src/cl_app/cl_alarms/ext/inc/cl_alarmdetector_ext.h \
+ ../src/cl_app/cl_rinse/ext/inc/cl_rinse_controller_ext.h \
+ ../src/cl_app/cl_stby/ext/inc/cl_standby_controller_ext.h \
+ ../src/cl_app/cl_dprep/ext/inc/cl_dprep_controller_ext.h \
+ ../src/cl_app/cl_status/ext/inc/cl_status_ext.h \
+ ../src/cl_app/cl_event_manager/ext/inc/cl_event_manager_ext.h \
+ ../src/cl_app/cl_init/ext/inc/cl_init_ext.h \
+ ../src/cl_app/cl_mac/inc/cl_mac_proto.h \
+ ../src/cl_app/cl_error/ext/cl_errorhandler_ext.h \
+ ../src/cl_app/cl_datamanager/ext/inc/cl_datamanager_ext.h \
+ ../src/cl_app/cl_cal/calibration.h \
+ ../src/cl_app/cl_dlsis/inc/cl_dlsiscontroller_include.h \
+ ../src/cl_app/cl_dlsis/inc/cl_dlsis_controller.h \
+ ../src/cl_app/cl_heatcntrl/inc/cl_heatercontroller.h \
+ ../src/cl_app/cl_bc_cntrl/inc/Cl_bc_controller.h \
+ ../src/cl_app/comp/heparinpumpcontrl/inc/cl_heparincontroller.h \
+ ../src/cl_app/comp/bloodpumpcntrl/inc/cl_bloodpumpcontroller.h \
+ ../src/cl_app/cl_status/inc/cl_status.h \
+ ../src/cl_app/cl_status/comp/inc/Cl_temperature_sensor.h \
+ ../src/cl_app/cl_status/comp/ext/inc/Cl_temperature_sensor_ext.h \
+ ../src/cl_app/cl_heatcntrl/ext/inc/cl_heatercontroller_ext.h \
+ ../src/cl_app/comp/heparinpumpcontrl/ext/inc/cl_heparincontroller_ext.h \
+ ../src/cl_app/comp/bloodpumpcntrl/ext/inc/cl_bloodpumpcontroller_ext.h \
+ ../src/cl_app/cl_bc_cntrl/ext/inc/Cl_bc_controller_ext.h
 
 ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController_include.h:
 
-../src/cl_app/inc/cl_types.h:
+../src/cl_app/cl_mac/inc/cl_mac_controller.h:
 
 ../src/asf.h:
 
@@ -490,6 +530,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 
 ../src/ASF/sam/drivers/pio/pio_handler.h:
 
+../src/cl_app/inc/cl_types.h:
+
 ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController.h:
 
 ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpFeedback.h:
@@ -549,3 +591,89 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpFeedback.h:
 
 ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpController_proto.h:
+
+../src/cl_app/cl_mac/ext/inc/cl_mac_controller_ext_.h:
+
+../src/sv_stubs/inc/sv_types.h:
+
+../src/sv_stubs/inc/sv_stub.h:
+
+../src/cl_app/comp/flowswitchcntrl/ext/inc/flowswitchcntrl_ext.h:
+
+../src/cl_app/comp/flowswitchcntrl/inc/flowswitchcntrl.h:
+
+../src/cl_app/cl_mac/inc/cl_mac_include.h:
+
+../src/cl_app/inc/cl_macros.h:
+
+../src/config/conf_board.h:
+
+../src/cl_app/cl_mac/inc/cl_mac_controller.h:
+
+../src/cl_app/cl_sys/cl_sys.h:
+
+../src/cl_app/comp/levelswichcntrl/inc/cl_level_switchcontroller.h:
+
+../src/cl_app/comp/deaeration/inc/cl_deaeration.h:
+
+../src/cl_app/cl_dprep/inc/cl_dprep_primecontroller.h:
+
+../src/cl_app/cl_alarms/inc/cl_alarmdetector.h:
+
+../src/cl_app/cl_alarms/inc/cl_alarmdetector.h:
+
+../src/cl_app/cl_console/ext/inc/cl_consolecontroller_ext.h:
+
+../src/cl_app/cl_dlsis/ext/inc/cl_dlsiscontroller_ext.h:
+
+../src/cl_app/cl_dlsis/inc/cl_dlsis_controller.h:
+
+../src/cl_app/cl_disinf/ext/inc/cl_disinfcontroller_ext.h:
+
+../src/cl_app/cl_alarms/ext/inc/cl_alarmdetector_ext.h:
+
+../src/cl_app/cl_rinse/ext/inc/cl_rinse_controller_ext.h:
+
+../src/cl_app/cl_stby/ext/inc/cl_standby_controller_ext.h:
+
+../src/cl_app/cl_dprep/ext/inc/cl_dprep_controller_ext.h:
+
+../src/cl_app/cl_status/ext/inc/cl_status_ext.h:
+
+../src/cl_app/cl_event_manager/ext/inc/cl_event_manager_ext.h:
+
+../src/cl_app/cl_init/ext/inc/cl_init_ext.h:
+
+../src/cl_app/cl_mac/inc/cl_mac_proto.h:
+
+../src/cl_app/cl_error/ext/cl_errorhandler_ext.h:
+
+../src/cl_app/cl_datamanager/ext/inc/cl_datamanager_ext.h:
+
+../src/cl_app/cl_cal/calibration.h:
+
+../src/cl_app/cl_dlsis/inc/cl_dlsiscontroller_include.h:
+
+../src/cl_app/cl_dlsis/inc/cl_dlsis_controller.h:
+
+../src/cl_app/cl_heatcntrl/inc/cl_heatercontroller.h:
+
+../src/cl_app/cl_bc_cntrl/inc/Cl_bc_controller.h:
+
+../src/cl_app/comp/heparinpumpcontrl/inc/cl_heparincontroller.h:
+
+../src/cl_app/comp/bloodpumpcntrl/inc/cl_bloodpumpcontroller.h:
+
+../src/cl_app/cl_status/inc/cl_status.h:
+
+../src/cl_app/cl_status/comp/inc/Cl_temperature_sensor.h:
+
+../src/cl_app/cl_status/comp/ext/inc/Cl_temperature_sensor_ext.h:
+
+../src/cl_app/cl_heatcntrl/ext/inc/cl_heatercontroller_ext.h:
+
+../src/cl_app/comp/heparinpumpcontrl/ext/inc/cl_heparincontroller_ext.h:
+
+../src/cl_app/comp/bloodpumpcntrl/ext/inc/cl_bloodpumpcontroller_ext.h:
+
+../src/cl_app/cl_bc_cntrl/ext/inc/Cl_bc_controller_ext.h:

@@ -88,6 +88,8 @@ src\cl_app\comp\heparinpumpcontrl\cl_heparinfeedback.c
 
 src\cl_app\comp\levelswichcntrl\cl_level_switchcontroller.c
 
+src\cl_app\comp\ufpumpcontrl\cl_IsoufPumpController.c
+
 src\cl_app\comp\ufpumpcontrl\cl_ufPumpFeedback.c
 
 src\cl_app\comp\ufpumpcontrl\cl_ufPumpController.c

@@ -43,7 +43,7 @@ Cl_ReturnCodeType cl_level_switchcontroller(levelswitchcntrl_event_type cntrl_ev
 		if(toggle_count > 20 )
 		{
 			// low inlet flow alarm or level switch  malfunction
-			Cl_Alarm_TriggerAlarm(LEVEL_SWITCH_LOW_TOGGLERATE,1);
+	//		Cl_Alarm_TriggerAlarm(LEVEL_SWITCH_LOW_TOGGLERATE,1);    commented
 		}
 
 	

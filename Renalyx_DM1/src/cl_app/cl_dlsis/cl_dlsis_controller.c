@@ -109,7 +109,7 @@ volatile Cl_Uint8Type var=0;
   wait_cnt_dls = 0;TmpVal_dls =0;
   temp1_dls =0 ;temp2_dls =0;
   bypass_flag=0;
-   bc_flag=0;
+   bc_flag=1;
   flow_rate=0;
  dlsis_ps1 = 0; dlsis_ps2=0; dlsis_ps3=0;dlsis_apt = 0; dlsis_vpt=0;
  dlsis_temp1=0;dlsis_temp2=0;dlsis_temp3=0;dlsis_cond=0;
@@ -364,7 +364,7 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 						Cl_Uint16Type temp = 0;
 					
 					Cl_SysStat_GetSensor_Status_Query(SENSOR_BDSTATUS , &temp);
-					if( temp == 0)
+					if( temp == 1)  // need to change as per the blood detector status
 					{
 						
 						Cl_SendDatatoconsole(CON_TX_COMMAND_PRINTTEXT,"BLOOD_DL",8);
@@ -382,28 +382,39 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 							cl_hep_controller(CL_HEP_EVENT_START_NORMAL_DELIVERY,0);
 						
 						sv_cntrl_disable_bypass();
-						Cl_Uint32Type temp = Treatdata[ID_ufgoal];
+					//	Cl_Uint32Type temp = Treatdata[ID_ufgoal];
+					//	Cl_Uint32Type temptime = Treatdata[ID_treattime]; // added to get the dialysis duration
 			
 						cl_uf_controller(CL_UF_EVENT_START,0);
 						cl_wait(100);
-						cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,10000);
-						cl_ufpumpFeedback_start();
-						switch (temp)
-						{
-							case 60:
-								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,35000);
-							break;
-							case 90:
-								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,25000);
-							break;
-							case 120:
-								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,20000);
-							break;
-							default:
-								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,8000);
-							break;
-						}
-						
+						//cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,10000); // commented no need to set uf rate here
+						//cl_ufpumpFeedback_start(); 
+			
+						// calculate rate based on dialysis duration and goal
+				//		Cl_Uint32Type tempUfRate = temp/temptime; 
+			
+						// based on this uf rate calculate the PWM
+			
+			
+			// below logic needs to be changed lookup table needs to be implemented between uf rate and pwm
+// 						switch (temp)
+// 						{
+// 							case 0 : cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,0); // added when uf goal is 0
+// 							break;
+// 							case 60:
+// 								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,35000);  // tempUfRate and pwn need to be defined
+// 							break;
+// 							case 90:
+// 								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,25000);
+// 							break;
+// 							case 120:
+// 								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,20000);
+// 							break;
+// 							default:
+// 								cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,8000);
+// 							break;
+// 						}
+// 						
 						/*cl_wait(200);
 						cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,5000);
 						cl_wait(600);
@@ -411,7 +422,8 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 						cl_wait(800);
 						cl_uf_controller(CL_UF_EVENT_SET_UF_RATE,2500);*/
 			
-						cl_dlsis_state = CL_DLSIS_STATE_UF_ACTIVATION;
+						cl_dlsis_state =CL_DLSIS_STATE_DIALYSIS; // added 
+						//cl_dlsis_state = CL_DLSIS_STATE_UF_ACTIVATION; // commented as uf tick second event is under event dialysis tick seconds
 					}
 					}
 			break;
@@ -481,6 +493,12 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 													case ID_ufrate:
 													break;
 													case ID_ufgoal:
+													if(cl_temp.word == 0){
+														cl_uf_controller(CL_UF_EVENT_STOP,0);
+													}
+													Treatdata[ID_ufgoal] = cl_temp.word;
+													cl_uf_controller(CL_UF_EVENT_RESET,0);
+													
 													break;
 													case ID_bolusvol:
 													break;
@@ -495,6 +513,9 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 													case ID_minufrate:
 													break;
 													case ID_treattime:
+													Treatdata[ID_treattime] = cl_temp.word;
+													cl_uf_controller(CL_UF_EVENT_RESET,0);
+													
 													break;
 													case ID_bloodratereturn:
 													break;
@@ -554,7 +575,7 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 			case EVENT_DLSIS_TICK_SECOND:
 			Cl_Dlsis_ResetAlertsforReassertion();
 			//	UpdateHeaterControls();
-				cl_uf_controller(CL_UF_EVENT_SECOND,0);
+				//cl_uf_controller(CL_UF_EVENT_SECOND,0);
 				cl_hep_controller(CL_HEP_EVENT_SEC_TICK,0);
 				Cl_Dlsis_SenddlsisData();
 				DlsisTime.Cl_dlsissecondscounter++;
@@ -601,7 +622,7 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 										//Cl_alarmThresholdTable.vpt_low_threshold = vpt - 50;
 							}
 					DlsisTime.Cl_dlsisTotalMinutescounter++;
-					if (DlsisTime.Cl_dlsisTotalMinutescounter == 5)
+					if (DlsisTime.Cl_dlsisTotalMinutescounter == CL_DLSIS_TIMEOUT_MIN);//Treatdata[ID_treattime])
 					{
 						//cl_testvirus();
 					}
@@ -739,6 +760,8 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 						break;
 						case EVENT_DLSIS_TICK_SECOND:
 						
+						Cl_Dlsis_SenddlsisData();
+						/*
 							for (tempcount = 0 ; tempcount < CL_DLSIS_ALRM_MAX ; tempcount++)
 							{
 								//Cl_SendDatatoconsole(CON_TX_COMMAND_PRINTTEXT,"ENTER",8);
@@ -774,7 +797,7 @@ Cl_dlsisretcode =  cl_dlsis_translatemacevent( Cl_MacDlsisEvent, &cl_dlsis_event
 										//cl_dlsis_state = CL_DLSIS_STATE_DIALYSIS;
 									}
 								}
-							}
+							} */
 						/*	if (dlsisalarm != _NO_ALARM)
 							{
 								Cl_SendDatatoconsole(CON_TX_COMMAND_PRINTTEXT,"ENTER_1",8);
@@ -1539,7 +1562,7 @@ Cl_ReturnCodeType Cl_Dlsis_UpdateTimeInfo(void)
 	 {
 		 Cl_ReturnCodeType Cl_dlsisretcode = CL_ERROR;
 		 
-		 if(DlsisTime.Cl_dlsisTotalMinutescounter > CL_DLSIS_TIMEOUT_MIN )
+		 if(DlsisTime.Cl_dlsisTotalMinutescounter > Treatdata[ID_treattime] )
 		 {
 			 
 			 Cl_dlsisretcode = CL_OK;
@@ -1587,11 +1610,11 @@ Cl_ReturnCodeType Cl_Dlsis_UpdateAlarmTable(ClDlsisAlarmIdType * ClRinseAlarmId 
 				{
 				//	cl_alarmId = (Cl_Uint8Type)Cl_DlsisAlarmTable[tempcount].Cl_DlsisAlarmId;
 
-					data[0] = (Cl_Uint8Type)Cl_DlsisAlarmTable[tempcount].Cl_DlsisAlarmId;             // uncommented on 04.07.17 to get alarm indication on tablet
-					data[1] = (Cl_Uint8Type) CL_ALARM_TRIGGERED;									// uncommented on 04.07.17 to get alarm indication on tablet
-					data[1] = (Cl_Uint8Type) CRITICAL;											// uncommented on 04.07.17 to get alarm indication on tablet
-					command = CON_TX_COMMAND_ALARM;							// uncommented on 04.07.17 to get alarm indication on tablet
-					Cl_dlsisretcode = Cl_SendDatatoconsole(command,&data,3);     // uncommented on 04.07.17 to get alarm indication on tablet
+				//	data[0] = (Cl_Uint8Type)Cl_DlsisAlarmTable[tempcount].Cl_DlsisAlarmId;
+				//	data[1] = (Cl_Uint8Type) CL_ALARM_TRIGGERED;
+				//	data[1] = (Cl_Uint8Type) CRITICAL;
+				//	command = CON_TX_COMMAND_ALARM;
+				//	Cl_dlsisretcode = Cl_SendDatatoconsole(command,&data,3);
 					Cl_DlsisAlarmTable[tempcount].IsRaised = true;
 					Cl_dlsisretcode = CL_DlsisAlarmActon(Cl_DlsisAlarmTable[tempcount].Cl_DlsisAlarmId);
 					
@@ -1884,8 +1907,8 @@ Cl_ReturnCodeType Cl_Dlsis_BypassDialysis(void)
 			DlsisTime.Cl_dlsisTotalhourscounter = 0;
 			 DlsisTime.Cl_dlsisTotalMinutescounter = 0;
 			 Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BLOODDOOR_STATUS_OPEN,false );
-			 Cl_dlsisretcode =  Cl_AlarmActivateAlarms(LEVELSWITCH_OFF_TO_ON,false );
-			 Cl_dlsisretcode =  Cl_AlarmActivateAlarms(LEVELSWITCH_ON_TO_OFF ,false);
+		//	 Cl_dlsisretcode =  Cl_AlarmActivateAlarms(LEVELSWITCH_OFF_TO_ON,false );
+		//	 Cl_dlsisretcode =  Cl_AlarmActivateAlarms(LEVELSWITCH_ON_TO_OFF ,false);
 			 Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER1STATUS_CLOSED,false );
 			 Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER2STATUS_CLOSED,false );
 			 Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER1STATUS_OPEN,false );
@@ -1926,15 +1949,17 @@ Cl_ReturnCodeType Cl_Dlsis_BypassOff(void)
 	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER2STATUS_CLOSED,true );
 	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER1STATUS_OPEN,false );
 	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER2STATUS_OPEN,false );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_LOW,true );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_HIGH,true );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_LOW,false );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_HIGH,false );
 	  //Cl_dlsisretcode =  Cl_AlarmActivateAlarms( ABD_EVENT,true );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(ACID_IN_OPEN,true );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BICARB_IN_OPEN,true );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms( BD_EVENT,true );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(ACID_IN_CLOSED,true );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BICARB_IN_CLOSED,true );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(ACID_IN_OPEN,false );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BICARB_IN_OPEN,false );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms( BD_EVENT,false );
 	  //Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BLD_EVENT,true );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP3_HIGH_THRESHOLD,true );
-	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP3_LOW_THRESHOLD,true );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP3_HIGH_THRESHOLD,false );
+	  Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP3_LOW_THRESHOLD,false );
 	  
 	Cl_dlsisretcode =  sv_cntrl_activatepump(UFPUMP);
 	cl_dlsis_state = CL_DLSIS_STATE_DIALYSIS;
@@ -2134,7 +2159,7 @@ Cl_ReturnCodeType Cl_Dlsis_SenddlsisData(void)
 							res_temp_lookuptable(cal_data);
 							//	tmp3 =	(tmp3*5 + res_temp_value)/6;
 							temp1 = res_temp_value/10;
-							temp1 = temp1 - 6;                                  // removed offset on 02.07.17
+							temp1 = temp1 - 3.1+1.4;                                  // removed offset on 02.07.17
 							avgtmp3 =(avgtmp3*5 + temp1)/6;
 							
 							
@@ -2577,34 +2602,43 @@ Cl_ReturnCodeType	Cl_Dlsis_ResumeDialysis(void)
 									Cl_dlsisretcode =  Cl_AlarmConfigureAlarmType(BLOODDOOR_STATUS_OPEN,LOGIC_HIGH,0,0,0);
 									Cl_dlsisretcode =  Cl_AlarmConfigureAlarmType(ACID_IN_OPEN,LOGIC_LOW,0,0,0);
 									Cl_dlsisretcode =  Cl_AlarmConfigureAlarmType(BICARB_IN_OPEN,LOGIC_LOW,0,0,0);
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BLOODDOOR_STATUS_OPEN,true );
+									
+									
+									//Cl_dlsisretcode =  Cl_AlarmActivateAlarms(BLOODDOOR_STATUS_OPEN,true );
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(LEVELSWITCH_OFF_TO_ON,true );
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(LEVELSWITCH_ON_TO_OFF ,true);
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER1STATUS_CLOSED,true );
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER2STATUS_CLOSED,true );
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER1STATUS_OPEN,false );
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( HOLDER2STATUS_OPEN,false );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_LOW,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_HIGH,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_DAC_OPEN,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_DAC_RO,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_DAC_HIGH,true );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_LOW,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_STATUS_HIGH,false );
+								//	Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_DAC_OPEN,true );
+								//	Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_DAC_RO,true );
+								//	Cl_dlsisretcode =  Cl_AlarmActivateAlarms(COND_DAC_HIGH,true );
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( ABD_EVENT,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( BD_EVENT,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(APTSTATUS_HIGH,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(VPTSTATUS_HIGH ,true);
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(APTSTATUS_LOW,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(VPTSTATUS_LOW,true);
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( BD_EVENT,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(APTSTATUS_HIGH,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(VPTSTATUS_HIGH ,false);
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(APTSTATUS_LOW,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(VPTSTATUS_LOW,false);
 									Cl_dlsisretcode =  Cl_AlarmActivateAlarms( BLD_EVENT,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS2_HIGH_THRESHOLD,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS2_LOW_THRESHOLD,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS1_HIGH_THRESHOLD,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS1_LOW_THRESHOLD,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS3_HIGH_THRESHOLD ,true);
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS3_LOW_THRESHOLD ,true);
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS2_HIGH_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS2_LOW_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS1_HIGH_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS1_LOW_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS3_HIGH_THRESHOLD ,false);
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(PS3_LOW_THRESHOLD ,false);
 									
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(SENSOR_TEMP3STATUS,true );
-									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(SENSOR_TEMP2STATUS,true );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(SENSOR_TEMP3STATUS,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(SENSOR_TEMP2STATUS,false );
+									
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP1_HIGH_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP1_LOW_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP2_HIGH_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP2_LOW_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP3_HIGH_THRESHOLD,false );
+									Cl_dlsisretcode =  Cl_AlarmActivateAlarms(TEMP3_LOW_THRESHOLD,false );
 									
 									if(Current_sense_trigger)
 									{
@@ -2647,26 +2681,13 @@ Cl_ReturnCodeType	Cl_Dlsis_ResumeDialysis(void)
 										sv_cs_setpotvalue(potvalue);
 										break;
 										
-// 										case 400:
-// 										sv_cntrl_setpumpspeed(DCMOTOR2,900);
-// 										sv_cntrl_setpumpspeed(DCMOTOR1,360);
-// 										potvalue = (2000 * 1024)/10000;
-// 										sv_cs_setpotvalue(potvalue);
-// 										break;
-										
+									
 										case 300:
-										sv_cntrl_setpumpspeed(DCMOTOR2,1000);
-										sv_cntrl_setpumpspeed(DCMOTOR1,640);
-										potvalue = (920 * 1024)/10000;
+										sv_cntrl_setpumpspeed(DCMOTOR2,1120);
+										sv_cntrl_setpumpspeed(DCMOTOR1,620);
+										potvalue = (800 * 1024)/10000;
 										sv_cs_setpotvalue(potvalue);
 										break;
-										
-// 										case 200:
-// 										sv_cntrl_setpumpspeed(DCMOTOR2,900);
-// 										sv_cntrl_setpumpspeed(DCMOTOR1,210);
-// 										potvalue = (1200 * 1024)/10000;
-// 										sv_cs_setpotvalue(potvalue);
-// 										break;
 										
 										default:
 										sv_cntrl_setpumpspeed(DCMOTOR2,1000);

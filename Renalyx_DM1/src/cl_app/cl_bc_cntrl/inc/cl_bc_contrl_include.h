@@ -24,7 +24,7 @@
 #include "cl_heatercontroller_ext.h"
 #include "cl_mac_controller_ext_.h"
 #include "cl_ufPumpFeedback_ext.h"
-
+#include "cl_alarmdetector_ext.h"
 
 
 #endif /* CL_BC_CONTRL_INCLUDE_H_ */

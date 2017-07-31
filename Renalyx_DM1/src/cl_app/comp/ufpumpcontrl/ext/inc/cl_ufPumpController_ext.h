@@ -11,6 +11,8 @@
 
 #include "cl_ufPumpController.h"
 extern Cl_ReturnCodeType cl_uf_controller(cl_uf_events uf_event , int32_t data);
+extern Cl_ReturnCodeType cl_isouf_controller(Cl_Mac_EventsType Cl_MacDlsisEvent);
+extern Cl_ReturnCodeType Cl_isouf_init(void);
 
 
 #endif /* CL_UFPUMPCONTROLLER_EXT_H_ */

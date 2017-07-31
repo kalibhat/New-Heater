@@ -43,11 +43,14 @@ extern Cl_ReturnCodeType cl_wait(Cl_Uint32Type ul_dly_ticks);
 bool cl_console_sync = false;
 
 
-
+Cl_ConsoleTxCommandtype ackCommand;
 
 
 Cl_Uint8Type loopackflag = false;
 
+Cl_ConsoleTxCommandtype cur_command;
+Cl_Uint8Type cur_data ;
+Cl_Uint8Type cur_datasize;
 
 /*
  * \brief  check a new console message has arrived in the consoledatabuffer
@@ -261,10 +264,7 @@ Cl_ReturnCodeType	 Cl_Mac_Create_ConsoleEvent(void)
 			Cl_ConsoleRxMsg.msgready = true;
 			Cl_Console_msgbuffer.ConsoleNewMessageReady = false;
 		
-			if ( CL_OK == Cl_Console_ConvertConsoleEvent_toMacEvent(Cl_ConsoleRxMsg.command,&MacEvent))
-			{
-				
-			
+			Cl_Console_ConvertConsoleEvent_toMacEvent(Cl_ConsoleRxMsg.command,&MacEvent);
 			Cl_MacEvent = MacEvent;
 			Cl_MacNewEvent = true;
 			if( Cl_MacEventQueue3.Cl_MacNewEventcount <= MAC_EVENT_COUNT_MAX )	
@@ -284,7 +284,7 @@ Cl_ReturnCodeType	 Cl_Mac_Create_ConsoleEvent(void)
 				}
 				 			
 			 }
-			}
+			 
 				
 			}
 			
@@ -418,7 +418,7 @@ Cl_ReturnCodeType Cl_SendDatatoconsole(Cl_ConsoleTxCommandtype command, Cl_Uint8
 		//	if(( CON_TX_COMMAND_COMMAND_SCRIPT_PRNIT == command)|| ( command == CON_TX_COMMAND_PRINTDATA) ||(command == CON_TX_COMMAND_PRINTTEXT)  || (command == CON_TX_COMMAND_COMMAND_SCRIPT_BULK_PRINT))
 		//	if(( CON_TX_COMMAND_COMMAND_SCRIPT_PRNIT == command)|| ( command == CON_TX_COMMAND_PRINTDATA) ||(command == CON_TX_COMMAND_PRINTTEXT) ||(command == CON_TX_COMMAND_COMMAND_SYSTEM_STATE )  || (command == CON_TX_COMMAND_COMMAND_SCRIPT_BULK_PRINT) || (command == CON_TX_COMMAND_ALARM))
 		
-			if(( CON_TX_COMMAND_COMMAND_SCRIPT_PRNIT == command)|| ( command == CON_TX_COMMAND_PRINTDATA) ||(command == CON_TX_COMMAND_PRINTTEXT) || (command == CON_TX_COMMAND_ALARM))
+			if(( CON_TX_COMMAND_COMMAND_SCRIPT_PRNIT == command)|| ( command == CON_TX_COMMAND_PRINTDATA) ||(command == CON_TX_COMMAND_PRINTTEXT) ) //|| (command == CON_TX_COMMAND_ALARM)
 			{
 			//	return;  /**************  To be returned for proper working with tablet ******/////  comment return to work with script
 			}
@@ -435,6 +435,12 @@ Cl_ReturnCodeType Cl_SendDatatoconsole(Cl_ConsoleTxCommandtype command, Cl_Uint8
 		
 		
 	}
+	
+	cur_command = command;
+	cur_data = data;
+	cur_datasize = datasize;
+	
+	
 	if (CONT_TX_COMMAND_BLOODPUMP_OFF == command)
 	{
 		syncdone = true;
@@ -515,6 +521,7 @@ Cl_ReturnCodeType Cl_SendDatatoconsole(Cl_ConsoleTxCommandtype command, Cl_Uint8
 		
 	}
 	
+ackCommand = command;	
 
 //	printf("\n");
 	return CL_OK;
@@ -579,8 +586,6 @@ Cl_ReturnCodeType Cl_SendDatatoconsoleDummycommand(Cl_ConsoleTxCommandtype comma
  */
 Cl_ReturnCodeType Cl_Console_ConvertConsoleEvent_toMacEvent(Cl_ConsoleRxEventsType command ,Cl_Mac_EventsType* MacEvent)
 {
-Cl_ReturnCodeType CL_RETVAL = CL_OK;
-	
 
 	switch(command)
 	{
@@ -726,11 +731,16 @@ Cl_ReturnCodeType CL_RETVAL = CL_OK;
 		case CON_RX_EVT_COMMAND_MINUF_OFF:
 		*MacEvent = EVT_CONSOLE_COMMAND_MINUF_OFF;
 		break;
+		case CON_RX_COMMAND_ISOUF_START:
+		*MacEvent = EVT_CONSOLE_COMMAND_ISOUF_START;
+		break;
+		case CON_RX_COMMAND_ISOUF_STOP:
+		*MacEvent = EVT_CONSOLE_COMMAND_ISOUF_STOP;
+		break;
 		default:
-		CL_RETVAL= CL_ERROR;
 		break;
 	}
-	return CL_RETVAL;
+	return CL_OK;
 }
 
 /*

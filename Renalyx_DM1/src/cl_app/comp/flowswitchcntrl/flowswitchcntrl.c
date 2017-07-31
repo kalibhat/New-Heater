@@ -61,7 +61,7 @@ static Cl_Uint16Type toggle_count_flow = 0;
 						//	flowswitchcntrlstate  = FLOW_SWITCH_CNTRL_STOPPED;
 							//flowswitchcntrlstate  = FLOW_SWITCH_CNTRL_IDLE;
 						}
-						if(toggle_count_flow > 50 )
+						if(toggle_count_flow > 1500 )
 						{
 							//  high  flow alarm 
 							Cl_Alarm_TriggerAlarm(FLOW_HIGH_FLOWRATE,1);

@@ -47,6 +47,7 @@ static uint16_t dd_valve_port_21_32 = 0 ;
 
 static bool ByPass = 0 , LoopBack = 0;
 
+extern bool isouf;
 
 uint8_t DD_ENABLE_BYPASS()
 {
@@ -811,8 +812,7 @@ uint8_t DD_SET_VALVE_21_32_IO()
 	{
 		switch (count)
 		{
-			
-			
+						
 			case ALARM_BUZZER:
 			p_io = 13;
 			peri = PC;
@@ -1316,18 +1316,25 @@ uint8_t DD_SET_FLOW_PATH(sv_flowpathtype sv_flowpath)
 	//	DD_SET_VALVE (VALVE_ID14);
 		
 	//	DD_RESET_VALVE (VALVE_ID16);
-		if( ByPass)
+		if( ByPass && !isouf)
 		{
 			DD_SET_VALVE (VALVE_ID15);
 			DD_RESET_VALVE (VALVE_ID13);
 			DD_RESET_VALVE (VALVE_ID14);
 		}
-		else
+		else if (isouf)
 		{
-			DD_RESET_VALVE (VALVE_ID15);	
+			DD_SET_VALVE (VALVE_ID15);
+			DD_RESET_VALVE (VALVE_ID13);
+			DD_SET_VALVE (VALVE_ID14);
+		}
+		else{
+			DD_RESET_VALVE (VALVE_ID15);
 			DD_SET_VALVE (VALVE_ID13);
 			DD_SET_VALVE (VALVE_ID14);
 		}
+		
+		
 		if( LoopBack)
 		{
 			DD_SET_VALVE (VALVE_ID16);
@@ -1369,15 +1376,20 @@ uint8_t DD_SET_FLOW_PATH(sv_flowpathtype sv_flowpath)
 	//	DD_SET_VALVE (VALVE_ID14);
 	//	DD_SET_VALVE (VALVE_ID15);
 	//	DD_RESET_VALVE (VALVE_ID16);
-		if( ByPass)
+		if( ByPass && !isouf)
 		{
 			DD_SET_VALVE (VALVE_ID15);
 			DD_RESET_VALVE (VALVE_ID13);
 			DD_RESET_VALVE (VALVE_ID14);
 		}
-		else
+		else if (isouf)
 		{
-			DD_RESET_VALVE (VALVE_ID15);	
+			DD_SET_VALVE (VALVE_ID15);	
+			DD_RESET_VALVE (VALVE_ID13);
+			DD_SET_VALVE (VALVE_ID14);
+		}
+		else{
+			DD_RESET_VALVE (VALVE_ID15);
 			DD_SET_VALVE (VALVE_ID13);
 			DD_SET_VALVE (VALVE_ID14);
 		}

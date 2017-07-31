@@ -150,6 +150,9 @@ typedef enum   {
 	 PROP_RECOVER   ,//;
 	 PROP_START_ACID_PUMP,
 	 PROP_START_BICARB_PUMP,
+	 PROP_UPDATE_ACID_RC,              // added to update Acid RC 
+	 PROP_UPDATE_BICARB_RC,			  // added to update Bicarb RC
+	 PROP_SET_CONDUCTIVITY,			 // added to set conductivity
 	 
 	 BP_START_BLOOD_PUMP = 0x20,
 	 BP_STOP_PUMP,

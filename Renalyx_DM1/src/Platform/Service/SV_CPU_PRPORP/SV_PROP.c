@@ -26,7 +26,9 @@ void sv_prop_start_disinfect_intake(void);
 void sv_prop_stop_disinfect_intake(void);
 void sv_prop_start_citricdisinfect_intake(void);
 void sv_prop_stop_citricdisinfect_intake(void);
-void sv_prop_set_propro_rc(uint8_t data);
+void sv_prop_set_propo_ACIDrc(uint16_t data);
+void sv_prop_set_propo_BICARBrc(uint16_t data);
+void sv_prop_set_propo_CONDUCTIVITY(uint16_t data);
 static uint8_t data = 0;
 uint16_t count = 0;
 
@@ -65,18 +67,30 @@ void sv_prop_startbicarbpump()
 }
 
 
-void sv_prop_set_propro_rc(uint8_t data)
+void sv_prop_set_propo_ACIDrc(uint16_t data)
 {
-	//DD_IIC_SEND_PROP( CPU_PROP_IIC_ADDR, data);				// nEEDS TO WRITE CAN EQUIVALENT COMMAND
+	
 	uint16_t rc_count = data;
-	SV_CAN_WRITE_PROPO( PROP_STOP_MIXING,data);
+	SV_CAN_WRITE_PROPO( PROP_UPDATE_ACID_RC,data);                 // Gopal: Send Acid RC (speed) to Propo CPU via Can
+}
+void sv_prop_set_propo_BICARBrc(uint16_t data)
+{
+	
+	uint16_t rc_count = data;
+	SV_CAN_WRITE_PROPO( PROP_UPDATE_BICARB_RC,data);                // Gopal: Send Bicarb RC (speed) to Propo CPU via Can
 }
 
+void sv_prop_set_propo_CONDUCTIVITY(uint16_t data)
+{
+	uint16_t conductivity = data;
+	SV_CAN_WRITE_PROPO( PROP_SET_CONDUCTIVITY,conductivity);      // Gopal: Send user set conducivity value to Propo CPU via Can
+}
 void sv_prop_stopmixing()
 {
 	//DD_IIC_SEND_PROP( CPU_PROP_IIC_ADDR, 2);
 	SV_CAN_WRITE_PROPO( PROP_STOP_MIXING,0);
 }
+
 
 void sv_prop_start_disinfect_intake(void)
 {

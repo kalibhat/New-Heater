@@ -1116,6 +1116,9 @@
     <Compile Include="src\cl_app\comp\levelswichcntrl\inc\cl_level_switchcontroller_proto.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\cl_app\comp\ufpumpcontrl\cl_IsoufPumpController.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\cl_app\comp\ufpumpcontrl\cl_ufPumpFeedback.c">
       <SubType>compile</SubType>
     </Compile>

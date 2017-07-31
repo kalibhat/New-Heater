@@ -58,8 +58,16 @@ extern Cl_Uint32Type can_flag;
 extern uint8_t sv_cntrl_setoutput(uint32_t p_io, uint32_t peri);
 extern uint8_t sv_cntrl_resetoutput(uint32_t p_io, uint32_t peri);
 Sys_statusType temp_sensor_struct;
+
+extern Cl_ConsoleTxCommandtype ackCommand;
+
+extern Cl_ConsoleTxCommandtype cur_command;
+extern Cl_Uint8Type cur_data ;
+extern Cl_Uint8Type cur_datasize;
+
+
 int main(void)
-    {
+   {
 	   
 	Cl_ReturnCodeType 	 Cl_MacRetval = CL_ERROR;
 	Cl_Mac_EventsType Cl_MacstbEvent = EVT_NULL;
@@ -247,6 +255,14 @@ pmc_enable_periph_clk(ID_TWI0);
 			if(Cl_MacEvent == EVT_CONSOLE_COMMAND_ACK)
 			{
 				//send sync
+				// save the data command 
+				if(ackCommand = Cl_ConsoleRxMsg.data.byte[0]){
+					
+				}
+				else{
+					// again send 
+					Cl_SendDatatoconsole(cur_command, cur_data,cur_datasize);
+				}
 				ConsoleSync = true;
 			}
 			
@@ -265,7 +281,6 @@ pmc_enable_periph_clk(ID_TWI0);
 			}			
 			
 			
-
 				switch (Cl_MacState)
 				{			
 					case MAC_START:
@@ -1031,13 +1046,14 @@ pmc_enable_periph_clk(ID_TWI0);
 							{
 								// handle error
 							}
+							//Cl_MacEvent = EVT_NULL;
 						break;
 						
 						//case EVT_CONSOLE_COMMAND_SET_DATA:
 						//case EVT_CONSOLE_COMMAND_GET_DATA:
-						Cl_MacRetval = Cl_dprep_controller(Cl_MacEvent);
-						ASSERT_ERROR(Cl_MacRetval);
-						break;
+					//	Cl_MacRetval = Cl_dprep_controller(Cl_MacEvent);
+					//	ASSERT_ERROR(Cl_MacRetval);
+					//	break;
 						case EVT_CONSOLE_COMMAND_DIALYSIS_START:
 							Cl_MacRetval = Cl_Standby_Controller(Cl_MacEvent);
 							ASSERT_ERROR(Cl_MacRetval);
@@ -1076,9 +1092,189 @@ pmc_enable_periph_clk(ID_TWI0);
 							ASSERT_ERROR(Cl_MacRetval);
 						}
 						break;
+						
+						// add case for isouf start event
+						case EVT_CONSOLE_COMMAND_ISOUF_START:
+						
+						Cl_MacState = MAC_ISOUF;
+						Cl_MacRetval = cl_isouf_controller(Cl_MacEvent);
+						
+						
+						break;
+						
 						default: break;
 					}
 					break;
+					
+					case MAC_ISOUF:
+					
+					switch(Cl_MacEvent){
+					
+						case EVT_CONSOLE_COMMAND_CLR_ALARM:
+						case EVT_CONSOLE_COMMAND_SET_BLDPMP_ON:
+						case EVT_CONSOLE_COMMAND_SET_BLDPMP_OFF:
+						case EVT_CONSOLE_COMMAND_SET_BLDPUMPRATE:
+						case EVT_CONSOLE_COMMAND_HEPARIN_START:
+						case EVT_CONSOLE_COMMAND_HEPARIN_STOP:
+						case EVT_CONSOLE_COMMAND_HEP_PMP_RATE:
+						case EVT_TICK_50M:
+						case EVT_TICK_500M:
+						case EVT_TICK_SEC:
+						case EVT_TICK_MIN:
+						case EVT_TICK_HOUR:
+						case EVT_ALARM_TRIGGERED:
+						case EVT_ALERT_TRIGGERED:
+						//case EVT_CONSOLE_COMMAND_GET_DATA:
+						//case EVT_CONSOLE_COMMAND_SET_DATA:
+						Cl_MacRetval = cl_isouf_controller(Cl_MacEvent);
+						ASSERT_ERROR(Cl_MacRetval);
+						if(Cl_MacRetval != CL_OK)
+						{
+							// handle error
+						}
+						
+						Cl_MacEvent = EVT_NULL;
+						break;
+						
+						case MACREQ_ISOUF_COMPLETED:
+						
+						Cl_MacRetval = cl_isouf_controller(Cl_MacEvent);
+						ASSERT_ERROR(Cl_MacRetval);
+						if( Cl_MacRetval == CL_OK)
+						{
+							
+						//	Cl_MacRetval = Cl_rinse_init();
+						//	Cl_MacRetval = Cl_stby_init();
+						//	Cl_MacRetval = Cl_dprep_init();
+							Cl_MacRetval =Cl_isouf_init();
+							
+							Cl_MacState = MAC_POST_ISOUF_STANDBY;
+							Cl_SendDatatoconsole(CON_TX_COMMAND_COMMAND_SYSTEM_STATE,(void*)Cl_MacState,1);
+							ASSERT_ERROR(Cl_MacRetval);
+						}
+						else
+						{
+							//handle error
+						}
+						Cl_MacEvent = EVT_NULL;
+						break;
+					
+						case EVT_CONSOLE_COMMAND_ISOUF_STOP:
+						Cl_MacRetval = cl_isouf_controller(Cl_MacEvent);
+						ASSERT_ERROR(Cl_MacRetval);
+						break;
+						
+					}
+					
+					break;
+					
+					case MAC_POST_ISOUF_STANDBY:
+					
+					switch(Cl_MacEvent){
+						
+						case EVT_CONSOLE_COMMAND_CLR_ALARM:
+						case EVT_CONSOLE_COMMAND_SET_BLDPMP_ON:
+						case EVT_CONSOLE_COMMAND_SET_BLDPMP_OFF:
+						case EVT_CONSOLE_COMMAND_SET_BLDPUMPRATE:
+						case EVT_CONSOLE_COMMAND_HEPARIN_START:
+						case EVT_CONSOLE_COMMAND_HEPARIN_STOP:
+						case EVT_CONSOLE_COMMAND_HEP_PMP_RATE:
+						case EVT_TICK_50M:
+						case EVT_TICK_500M:
+						case EVT_TICK_SEC:
+						case EVT_TICK_MIN:
+						case EVT_TICK_HOUR:
+						case EVT_ALARM_TRIGGERED:
+						case EVT_ALERT_TRIGGERED:
+						//case EVT_CONSOLE_COMMAND_GET_DATA:
+						//case EVT_CONSOLE_COMMAND_SET_DATA:
+						Cl_MacRetval = cl_isouf_controller(Cl_MacEvent);
+						ASSERT_ERROR(Cl_MacRetval);
+						if(Cl_MacRetval != CL_OK)
+						{
+							// handle error
+						}
+						
+						Cl_MacEvent = EVT_NULL;
+						break;
+						
+						case EVT_CONSOLE_COMMAND_DIALYSIS_START:
+						Cl_MacRetval = Cl_Standby_Controller(Cl_MacEvent);
+						ASSERT_ERROR(Cl_MacRetval);
+						if((Cl_MacRetval == CL_OK)||(Cl_MacRetval == CL_REJECTED))
+						{
+							Cl_MacRetval = Cl_Rinse_Controller(Cl_MacEvent);
+							ASSERT_ERROR(Cl_MacRetval);
+						}
+						else
+						{
+							//handle error
+						}
+						if((Cl_MacRetval == CL_OK)||(Cl_MacRetval == CL_REJECTED))
+						{
+							Cl_MacRetval = Cl_dprep_controller(Cl_MacEvent);
+							ASSERT_ERROR(Cl_MacRetval);
+						}
+						else
+						{
+							//handle error
+						}
+						if((Cl_MacRetval == CL_OK)||(Cl_MacRetval == CL_REJECTED))
+						{
+							Cl_MacRetval = Cl_Dlsis_controller(Cl_MacEvent);
+							ASSERT_ERROR(Cl_MacRetval);
+						}
+						else
+						{
+							//handle error
+						}
+
+						if(Cl_MacRetval == CL_OK)
+						{
+							Cl_MacState = MAC_DIALYSIS;
+							Cl_SendDatatoconsole(CON_TX_COMMAND_COMMAND_SYSTEM_STATE,(void*)MAC_DIALYSIS,1);
+							ASSERT_ERROR(Cl_MacRetval);
+						}
+						break;
+						
+						case EVT_CONSOLE_COMMAND_RINSE_START:
+						Cl_MacRetval = Cl_Standby_Controller(Cl_MacEvent);
+						ASSERT_ERROR(Cl_MacRetval);
+						if(Cl_MacRetval == CL_OK)
+						{
+							Cl_MacRetval = Cl_Rinse_Controller(Cl_MacEvent);
+							ASSERT_ERROR(Cl_MacRetval);
+						}
+						else
+						{
+							//handle error
+						}
+						
+						if( Cl_MacRetval == CL_OK)
+						{
+							Cl_MacState = MAC_RINSE;
+							Cl_SendDatatoconsole(CON_TX_COMMAND_COMMAND_SYSTEM_STATE,(void*)MAC_RINSE,1);
+							ASSERT_ERROR(Cl_MacRetval);
+							//Cl_MacState = MAC_POST_RINSE_STANDBY;
+						}else
+						{
+							//handle error
+						}
+						break;
+						
+						case EVT_CONSOLE_COMMAND_ISOUF_START:
+						
+						Cl_MacState = MAC_ISOUF;
+						Cl_MacRetval = cl_isouf_controller(Cl_MacEvent);
+						
+						
+						break;
+						
+						
+						default: break;
+					}
+					break;
+					
 					case MAC_DIALYSIS:
 					switch ( Cl_MacEvent )
 				

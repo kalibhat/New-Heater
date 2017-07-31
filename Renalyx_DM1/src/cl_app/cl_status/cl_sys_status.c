@@ -456,6 +456,7 @@ void Cl_SysStat_mean_status_update(void)
 	Cl_Uint8Type* pdataarray;
 	cl_Datastreamtype cl_tdata;
 	int16_t bulk_data[14];
+	uint16_t raw_cond =0;
 	static Cl_Uint8Type  flow_counter =0 ;
 	static Cl_Uint16Type counter=0,threeseccounter=0,CS_ontimecnter=0,cnt = 0,levelsw_cnter = 0;
 	if(syncdone)
@@ -495,12 +496,12 @@ void Cl_SysStat_mean_status_update(void)
 				temp = temp - 31 + 14;
 				bulk_data[2] = temp;
 			}
-			Cl_SysStat_GetSensor_Status_Query(SENSOR_COND_STATUS,&sensordata);
+			Cl_SysStat_GetSensor_Status_Query(SENSOR_COND_STATUS,&raw_cond);
 			{
 			float	 cond1,	cond_final, cond1x100, cond_final_X10000;
 	
 			
-			cond1 = sensordata/100;
+			cond1 = raw_cond/100;
 			cond_final = 0.0001*cond1*cond1 + 0.032*cond1 +0.91 + 0.4;
 			cond1x100 = cond_final*100; ;
 			cond_final_X10000= (cond1x100/(1+(avgtmp3/100  -25.0)*0.021));
@@ -517,8 +518,10 @@ void Cl_SysStat_mean_status_update(void)
 			//		avgcond =cond_final * 10 ;
 				}
 	//			bulk_data[0] = cond1x100;
-				bulk_data[3] = avgcond;					//   chnaged on 01072017
+//				bulk_data[3] = avgcond;					//   chnaged on 01072017
 		//		bulk_data[3] = cond1x100;                    //   chnaged on 01072017
+		
+				bulk_data[3] = raw_cond;
 			}
 		Cl_SysStat_GetSensor_Status_Query(SENSOR_ACID_COND,&sensordata);
 		{
@@ -613,11 +616,11 @@ void Cl_SysStat_mean_status_update(void)
 				}
 				
 				 // remove comment after  removing heter data updates
-// 				cl_Datastreamtype cl_tdata;
-// 				cl_tdata.word =0;
-// 				cl_tdata.Twobyte = avgcond_bicarb;
-// 				cl_tdata.bytearray[2] = 6;
-// 				Cl_SendDatatoconsole(CON_TX_COMMAND_COMMAND_SCRIPT_PRNIT,&cl_tdata,4);
+				cl_Datastreamtype cl_tdata;
+				cl_tdata.word =0;
+				cl_tdata.Twobyte = avgcond_bicarb;
+				cl_tdata.bytearray[2] = 6;
+				Cl_SendDatatoconsole(CON_TX_COMMAND_COMMAND_SCRIPT_PRNIT,&cl_tdata,4);
 		}
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_FLOW_SWITCH,&sensordata);
 			{
@@ -652,18 +655,18 @@ void Cl_SysStat_mean_status_update(void)
 				calibration_apt(Atp);
 				aptavg = ((aptavg* 2) + pressure_final_apt)/3;
 				cl_tdata.word = 0;
-// 				cl_tdata.Twobyte = aptavg + 1000;
-// 				cl_tdata.bytearray[2] = 14;
-// 				bulk_data[5] = cl_tdata.Twobyte;
+				cl_tdata.Twobyte = aptavg + 1000;
+				cl_tdata.bytearray[2] = 14;
+				bulk_data[5] = cl_tdata.Twobyte;
 								
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_VPTSTATUS, &Vtp);
 			
 			calibration_vpt(Vtp);
 			vptavg = ((vptavg* 2) + pressure_final_vpt)/3;
 			cl_tdata.word = 0;
-// 			cl_tdata.Twobyte = vptavg + 1000;
-// 			cl_tdata.bytearray[2] = 15;
-// 			bulk_data[6] = cl_tdata.Twobyte;
+			cl_tdata.Twobyte = vptavg + 1000;
+			cl_tdata.bytearray[2] = 15;
+			bulk_data[6] = cl_tdata.Twobyte;
 	
 			
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_PS3STATUS,&Ps3);

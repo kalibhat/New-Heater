@@ -33,6 +33,13 @@ typedef struct
 	unsigned short ml;
 	unsigned short speed;
 }hep;
+
+typedef struct
+{
+	unsigned short rate;
+	unsigned short speed;
+}uf;
+
 typedef enum
 {
 	CAL_TEMP_TS1,

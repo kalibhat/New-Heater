@@ -340,13 +340,13 @@ Cl_ReturnCodeType cl_dprep_primecontroller(Cl_Dprep_PrimeEvents prime_event , in
 								cl_dialyser_prime_sec = 0;
 								cl_dialyser_prime_min++;
 							}
-				//			if(cl_dialyser_prime_min >= CL_DPREP_DIALISER_PRIME_TIMEOUT_MIN )
-							{
-								cl_bp_controller(CL_BP_EVENT_STOP,0);
-								//Cl_dprep_primeretcode = Cl_SendDatatoconsole(CON_TX_COMMAND_DIALISYS_PRIME_COMPLETED,&data,0);
-								cl_dprep_prime_state = CL_DPREP_PRIME_STATE_DIALYSER_PRIMING_COMPLETED;
-						
-							}
+// 							if(cl_dialyser_prime_min >= CL_DPREP_DIALISER_PRIME_TIMEOUT_MIN )
+// 							{
+// 								cl_bp_controller(CL_BP_EVENT_STOP,0);
+// 								Cl_dprep_primeretcode = Cl_SendDatatoconsole(CON_TX_COMMAND_DIALISYS_PRIME_COMPLETED,&data,0);
+// 								cl_dprep_prime_state = CL_DPREP_PRIME_STATE_DIALYSER_PRIMING_COMPLETED;
+// 						
+// 							}
 							break;
 							case CL_DPREP_PRIME_PRIME_SET_RATE:
 							break;
@@ -357,6 +357,7 @@ Cl_ReturnCodeType cl_dprep_primecontroller(Cl_Dprep_PrimeEvents prime_event , in
 								if(data == 1)
 								{
 									//Cl_dprep_primeretcode = Cl_SendDatatoconsole(CON_TX_COMMAND_DIALISYS_PRIME_COMPLETED,&data,0);
+									cl_bp_controller(CL_BP_EVENT_STOP,0);
 									cl_dprep_prime_state = CL_DPREP_PRIME_STATE_DIALYSER_PRIMING_COMPLETED;
 								}else
 								{
@@ -365,9 +366,10 @@ Cl_ReturnCodeType cl_dprep_primecontroller(Cl_Dprep_PrimeEvents prime_event , in
 									cl_dialyser_prime_sec = 0;
 									cl_dialyser_prime_min = 0;
 									cl_dprep_prime_state = CL_DPREP_PRIME_STATE_DIALYSER_PRIMING_STOPPED;
+									Cl_SendDatatoconsole(CON_TX_COMMAND_DIALYSER_PRIME_STOPPED,NULL,0);
 								}
 
-								Cl_SendDatatoconsole(CON_TX_COMMAND_DIALYSER_PRIME_STOPPED,NULL,0);
+							//	Cl_SendDatatoconsole(CON_TX_COMMAND_DIALYSER_PRIME_STOPPED,NULL,0);
 								
 							break;
 							case CL_DPREP_PRIME_PRIME_PAUSE_DIALYSER_PRIMING:
@@ -497,8 +499,8 @@ Cl_ReturnCodeType cl_dprep_activate_prime_related_alarms(void)
 			Cl_ReturnCodeType  Cl_dprep_primeretcode = CL_ERROR;
 			//		Cl_dprepretcode =  Cl_AlarmActivateAlarms(APTSTATUS_HIGH,true );
 			//		Cl_dprepretcode =  Cl_AlarmActivateAlarms(VPTSTATUS_HIGH,true );
-			//Cl_dprep_primeretcode =  Cl_AlarmConfigureAlarmType(BLOODDOOR_STATUS_OPEN,LOGIC_LOW,0,0,0);
-			//Cl_dprep_primeretcode =  Cl_AlarmActivateAlarms(BLOODDOOR_STATUS_OPEN,true );
+	//		Cl_dprep_primeretcode =  Cl_AlarmConfigureAlarmType(BLOODDOOR_STATUS_OPEN,LOGIC_LOW,0,0,0);
+	//		Cl_dprep_primeretcode =  Cl_AlarmActivateAlarms(BLOODDOOR_STATUS_OPEN,true );
 			
 	return CL_OK;
 }

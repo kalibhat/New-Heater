@@ -66,7 +66,7 @@ Cl_ReturnCodeType cl_event_handler(Cl_Mac_EventsType cl_event)
 		break;
 		case EVT_TICK_20M:
 		
-				cl_ufpumpFeedback_timer();
+				//cl_ufpumpFeedback_timer(); // commented for testing
 				cl_hep_pumpFeedback_timer();
 		#if 0
 				if(func_timer > 10)

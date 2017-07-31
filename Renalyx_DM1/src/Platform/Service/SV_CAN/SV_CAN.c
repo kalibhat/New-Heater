@@ -24,10 +24,10 @@ void SV_CAN_READ_PROPO(uint8_t PROPORTIONING_CPU_id, uint16_t data)
 }
 
 
-void SV_CAN_WRITE_PROPO(uint16_t data, uint16_t rc_count)
+void SV_CAN_WRITE_PROPO(uint16_t propo_cmd, uint16_t data)
 
 {
-	 DD_CAN_WRITE_PROPO(data, rc_count);
+	 DD_CAN_WRITE_PROPO(propo_cmd, data);							// Gopal: command to send Acid Rc, Bicarb Rc and the user set Conductivity value
 	
 }
 

@@ -21,6 +21,8 @@ volatile Cl_Uint16Type switch_time1=0,switch_time2=0;
 extern Cl_BoolType current_sense ;
 extern Cl_Uint8Type bc_flag;
 extern Cl_Uint32Type flow_rate;
+int switchb01alrcnt = 0;
+int switchb02alrcnt = 0;
 sv_flowpathtype cl_flowpathtable[CL_BC_STATE_MAXSTATE] =
 {
 	FLOW_PATH_NULL,		//CL_BC_STATE_IDLE,
@@ -178,11 +180,11 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 										{
 											 
 											 sv_cntrl_setpumpspeed(DCMOTOR2,600);
-											 sv_cntrl_setpumpspeed(DCMOTOR1,500);
+											 sv_cntrl_setpumpspeed(DCMOTOR1,1100);
 												sv_cntrl_enable_loopback();
 										//		sv_cntrl_enable_bypass();									// commented on 30.06.2017
 										    
-											potvalue = (550 * 1024)/10000;                                 // added on 30.06.2017
+											potvalue = (800 * 1024)/10000;                                 // added on 30.06.2017
 											sv_cs_setpotvalue(potvalue);
 											
 												sv_cntrl_poweronheater();
@@ -209,8 +211,8 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 								//	sv_prop_startmixing();
 								//	SetHeaterState(CL_HEATER_STATE_START);
 //check	
-							//		sv_cntrl_setpumpspeed(DCMOTOR2,900);
-							//		sv_cntrl_setpumpspeed(DCMOTOR1,560);  //960
+									sv_cntrl_setpumpspeed(DCMOTOR2,1000);
+									sv_cntrl_setpumpspeed(DCMOTOR1,1000);  //960
 									
 									
 									cl_bc_returncode = (Cl_ReturnCodeType)sv_cntrl_setflowpath(BC_FLUSH_1_V13_14);
@@ -218,6 +220,7 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 									cl_bc_returncode = Cl_mac_apprequesthandler(MACREQ_BC_OPENFILL_COMPLETED);
 									if(cl_bc_returncode == CL_OK)
 									{
+										Cl_AlarmActivateAlarms(BC_ALARM,true);
 										bc_laststate = bc_state;
 										bc_state = CL_BC_STATE_BO1_V13V14_TRANSITION;
 										bc_laststate = bc_state;
@@ -410,6 +413,16 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 								case 	BC_EVENT_500MS:
 								break;
 								case	BC_EVENT_SECOND:
+								if(fill_time > 150){
+									
+								sv_cntrl_setyellowalarm();
+								sv_cntrl_activate_valve( VALVE_ID4);
+								cl_wait(50);
+								sv_cntrl_deactivate_valve(VALVE_ID4);
+								cl_wait(50);
+								Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+													
+								}
 								
 								break;
 								case	BC_EVENT_CS:
@@ -424,50 +437,94 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 										switch (flow_rate)
 										{
 											case 800:
-												if (fill_time > 55)
-												{	sv_cntrl_setyellowalarm();
+												if ((fill_time > 55) || (fill_time < 45))
+												{	
+													
+													switchb01alrcnt++ ;
+
+													if(switchb01alrcnt >3){
+														
+													sv_cntrl_setyellowalarm();
 													sv_cntrl_activate_valve( VALVE_ID4);
 													cl_wait(50);
 													sv_cntrl_deactivate_valve(VALVE_ID4);
 													cl_wait(50);
+													 Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+													}
 												}
 												else
 												{
+													switchb01alrcnt = 0 ;
 													sv_cntrl_resetyellowalarm();
 												}
 											break;
 											
 											case 500:
-												if (fill_time > 80)
+												if ((fill_time > 77) || (fill_time < 67))
 												{
+													switchb01alrcnt++ ;
+
+													if(switchb01alrcnt >3){
+														
+																									
 													sv_cntrl_setyellowalarm();
 													sv_cntrl_activate_valve( VALVE_ID4);
 													cl_wait(50);
 													sv_cntrl_deactivate_valve(VALVE_ID4);
 													cl_wait(50);
+													Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+													}
 												}
 												else
 												{
-													sv_cntrl_resetyellowalarm();
-												}
-											break;
-																											
-											case 300:
-												if (fill_time > 130)
-												{
-													sv_cntrl_setyellowalarm();
-													sv_cntrl_activate_valve( VALVE_ID4);
-													cl_wait(50);
-													sv_cntrl_deactivate_valve(VALVE_ID4);
-													cl_wait(50);
-												}
-												else
-												{
+													switchb01alrcnt = 0 ;
 													sv_cntrl_resetyellowalarm();
 												}
 											break;
 											
-											}
+											case 400:
+											break;
+											
+											case 300:
+												if ((fill_time > 125) || (fill_time < 115))
+												{
+													
+													switchb01alrcnt++ ;
+
+													if(switchb01alrcnt >3){
+														
+													
+													sv_cntrl_setyellowalarm();
+													sv_cntrl_activate_valve( VALVE_ID4);
+													cl_wait(50);
+													sv_cntrl_deactivate_valve(VALVE_ID4);
+													cl_wait(50);
+													Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+													}
+												}
+												else
+												{
+													switchb01alrcnt = 0 ;
+													sv_cntrl_resetyellowalarm();
+												}
+											break;
+											
+											case 200:
+												if (fill_time > 190)
+												{
+													sv_cntrl_setyellowalarm();
+													sv_cntrl_activate_valve( VALVE_ID4);
+													cl_wait(50);
+													sv_cntrl_deactivate_valve(VALVE_ID4);
+													cl_wait(50);
+													Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+												}
+												else
+												{
+													sv_cntrl_resetyellowalarm();
+												}
+											break;
+										}
 									}
 
 								cl_bc_returncode = (Cl_ReturnCodeType)sv_cntrl_setflowpath(BC_FLUSH_2_V13_14);
@@ -521,6 +578,16 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 								case 	BC_EVENT_500MS:
 								break;
 								case	BC_EVENT_SECOND:
+									if(fill_time > 150){
+										
+										sv_cntrl_setyellowalarm();
+										sv_cntrl_activate_valve( VALVE_ID4);
+										cl_wait(50);
+										sv_cntrl_deactivate_valve(VALVE_ID4);
+										cl_wait(50);
+										Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+										
+									}
 								
 								break;
 								case	BC_EVENT_CS:
@@ -537,31 +604,45 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 										switch (flow_rate)
 										{
 											case 800:
-												if (fill_time > 55)
+												if ((fill_time > 55) || (fill_time < 45))
 												{
+													
+													switchb02alrcnt++ ;
+
+													if(switchb02alrcnt >3){
 													sv_cntrl_setyellowalarm();
 													sv_cntrl_activate_valve( VALVE_ID4);
 													cl_wait(50);
 													sv_cntrl_deactivate_valve(VALVE_ID4);
 													cl_wait(50);
+													Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+													}
 												}
 												else
 												{
+													switchb02alrcnt = 0;
 													sv_cntrl_resetyellowalarm();
 												}
 											break;
 											
 											case 500:
-												if (fill_time > 80)
+												if ((fill_time > 77) || (fill_time < 67))
 												{
+													
+													switchb02alrcnt++ ;
+
+													if(switchb02alrcnt >3){
 													sv_cntrl_setyellowalarm();
 													sv_cntrl_activate_valve( VALVE_ID4);
 													cl_wait(50);
 													sv_cntrl_deactivate_valve(VALVE_ID4);
 													cl_wait(50);
+													Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+													}
 												}
 												else
 												{
+													switchb02alrcnt = 0;
 													sv_cntrl_resetyellowalarm();
 												}
 											break;
@@ -570,16 +651,23 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 											break;
 											
 											case 300:
-											if (fill_time > 130)
+											if ((fill_time > 125) || (fill_time < 115))
 											{
+												
+												switchb02alrcnt++ ;
+
+												if(switchb02alrcnt >3){
 												sv_cntrl_setyellowalarm();
 												sv_cntrl_activate_valve( VALVE_ID4);
 												cl_wait(50);
 												sv_cntrl_deactivate_valve(VALVE_ID4);
 												cl_wait(50);
+												Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
+												}
 											}
 											else
 											{
+												switchb02alrcnt = 0;
 												sv_cntrl_resetyellowalarm();
 											}
 											break;
@@ -592,6 +680,7 @@ Cl_ReturnCodeType  Cl_bc_controller(Cl_BC_EventType cl_bc_event)
 													cl_wait(50);
 													sv_cntrl_deactivate_valve(VALVE_ID4);
 													cl_wait(50);
+													Cl_Alarm_TriggerAlarm(BC_ALARM, 1);
 												}
 												else
 												{

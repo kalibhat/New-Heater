@@ -94,7 +94,7 @@ Cl_ReturnCodeType Cl_LoadAlarmThresholdTable(void)
 		Cl_alarmThresholdTable.ps1_low_threshold = -200;
 		Cl_alarmThresholdTable.ps2_high_threshold = 400;
 		Cl_alarmThresholdTable.ps2_low_threshold = -300;
-		Cl_alarmThresholdTable.ps3_high_threshold = 700;
+		Cl_alarmThresholdTable.ps3_high_threshold = 1000;
 		Cl_alarmThresholdTable.ps3_low_threshold = -300;
 		Cl_alarmThresholdTable.temp1_high_threshold = 37;
 		Cl_alarmThresholdTable.temp1_low_threshold = 25;
@@ -435,7 +435,7 @@ Cl_ReturnCodeType Cl_alarms_scanforAlarms(void)
 	if(Cl_alarms_alarms[ABD_EVENT].cl_is_enabled)
 	{
 		
-		if(!cl_sys_statbuffer.abdstatus)
+		if(cl_sys_statbuffer.abdstatus)
 		{
 
 			Cl_alarms_alarms[ABD_EVENT].cl_alarmstate = CL_ALARM_DETECTED;
@@ -1621,7 +1621,7 @@ Cl_ReturnCodeType Cl_AlarmActivateAlarms(Cl_NewAlarmIdType cl_alarm_id , Cl_Bool
 	if((cl_alarm_id > _NO_ALARM) && (cl_alarm_id < _ALARM_MAX_ID))
 	{
 
-	if ((cl_alarm_id == HOLDER1STATUS_CLOSED) ||(cl_alarm_id == HOLDER2STATUS_CLOSED) || (cl_alarm_id == LEVELSWITCH_OFF_TO_ON) || (cl_alarm_id == LEVELSWITCH_ON_TO_OFF) || (cl_alarm_id == FPCURRENTSTATUS))
+	if (	(cl_alarm_id == LEVELSWITCH_OFF_TO_ON) || (cl_alarm_id == LEVELSWITCH_ON_TO_OFF) || (cl_alarm_id == FPCURRENTSTATUS))
 			{
 				Cl_alarms_alarms[cl_alarm_id].cl_is_enabled = true;
 				Cl_alarms_alarms[cl_alarm_id].cl_alarmstate = CL_ALARM_ACTIVE;

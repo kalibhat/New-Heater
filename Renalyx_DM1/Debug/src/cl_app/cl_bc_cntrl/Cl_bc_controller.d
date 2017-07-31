@@ -181,6 +181,7 @@ src/cl_app/cl_bc_cntrl/Cl_bc_controller.d \
  ../src/cl_app/cl_heatcntrl/ext/inc/cl_heatercontroller_ext.h \
  ../src/cl_app/comp/ufpumpcontrl/ext/inc/cl_ufPumpFeedback_ext.h \
  ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpFeedback.h \
+ ../src/cl_app/cl_alarms/ext/inc/cl_alarmdetector_ext.h \
  ../src/cl_app/cl_bc_cntrl/inc/cl_bc_cntril_proto.h \
  ../src/Platform/Service/sv_interface_fun.h \
  ../src/Platform/Service/sv_interface.h
@@ -564,6 +565,8 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/cl_app/comp/ufpumpcontrl/ext/inc/cl_ufPumpFeedback_ext.h:
 
 ../src/cl_app/comp/ufpumpcontrl/inc/cl_ufPumpFeedback.h:
+
+../src/cl_app/cl_alarms/ext/inc/cl_alarmdetector_ext.h:
 
 ../src/cl_app/cl_bc_cntrl/inc/cl_bc_cntril_proto.h:
 

@@ -685,6 +685,10 @@ Cl_ReturnCodeType  cl_stby_translatemacevent(Cl_Mac_EventsType Cl_MacStbyEvent,C
 		case EVT_CONSOLE_COMMAND_SET_BLDPMP_OFF:
 			*cl_stdby_event = EVENT_STBY_SET_BLDPMP_OFF;
 		break;
+		case EVT_CONSOLE_COMMAND_SET_BLDPUMPRATE:
+		*cl_stdby_event = EVENT_STBY__SET_BP_RATE;
+		break;
+		
 		case EVENT_STBY__SET_BP_RATE:
 			*cl_stdby_event = EVENT_STBY__SET_BP_RATE;
 		break;

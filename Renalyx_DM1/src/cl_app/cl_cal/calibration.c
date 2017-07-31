@@ -14,6 +14,7 @@ volatile float pressure_final_vpt=0,pressure_final_ps1=0,pressure_final_ps2=0,pr
 volatile float temprature_final_value_1=0,temprature_final_value_2=0,temprature_final_value_3=0;
 volatile float cond_final_cs3=0;
 volatile Cl_Uint32Type hep_speed;
+volatile Cl_Uint32Type uf_final =0;
 extern Cl_Uint8Type sv_cntrl_setpumpspeed(sv_pumptype sv_pump_id,Cl_Uint32Type speed);
 
 volatile temptre Temp1[117]= {0,0};
@@ -117,6 +118,10 @@ volatile lut apt2[26]=
 volatile lut vpt2[26]=
 {
 	{-40,-760},{-30,-550 },{-20,-430 },{-10	,-280},{0,-210},{10,5},{20,140},{30	,280},{40,336},	{50,550},{60,692},{70,840},{80,980},{90,1115},{100,1260},{110,1396},{120,1513},{140,1747},{160,2030},{180,2381},{200,2742},{240,3190},{280,3646},{320,4300},{360,4833},{420,5680}
+};
+
+volatile uf ufp[14] = {
+	{40,1500},{60,1050},{70,700},{80,650},{90,600},{100,550},{110,500},{120,450},{130,400},{150,350},{170,300},{200,250},{250,200},{340,150}
 };
 
 #if 0
@@ -393,6 +398,45 @@ void calibration_cond(float sensordata)
 		}*/
 	}
 }
+
+
+void calibrate_uf(int16_t ufrate){
+	
+	Cl_Uint16Type i;
+	float dummy_var = ufrate;
+	Cl_Uint32Type dummy_var1;
+	float slope;
+
+	
+	for (i=0;i<14;i++)
+		{
+			if (dummy_var == ufp[i].rate)
+			{
+				dummy_var1=ufp[i].speed;
+				uf_final=dummy_var1;
+				break;
+			}
+			else if ((dummy_var > ufp[i].rate) && (dummy_var < ufp[i+1].rate))
+			{
+				//temprature_final_value =dummy_var;
+				slope = (((ufp[i+1].speed - ufp[i].speed))/(ufp[i+1].rate - ufp[i].rate));
+				//temprature_final_value =slope*1000;
+				uf_final = ((slope*(dummy_var - ufp[i].rate)) + ufp[i].speed);
+				//temprature_final_value_1 =temprature_final_value_1/100;
+				//temprature_final_value =1500;
+				break;
+			}
+			/*else if (dummy_var < Temp1[i].volts)
+			{
+				temprature_final_value_1 = (31.47*(dummy_var/1000)-9.829)*10;
+				break;
+			}*/
+			
+		}
+	
+	
+}
+
 // void calibration_tmp(float millivolts, temp_state temp_var)
 // {
 // 	

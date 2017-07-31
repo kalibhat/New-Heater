@@ -38,6 +38,8 @@
 #include "cl_mac_proto.h"
 #include "cl_errorhandler_ext.h"
 #include "cl_datamanager_ext.h"
+#include "cl_ufPumpController_include.h"
+#include "cl_ufPumpController_ext.h"
 
 
 

@@ -31,7 +31,8 @@ Cl_ReturnCodeType cl_datamanager_init()
 	Treatdata[ID_vptllimit] = 0;
 	Treatdata[ID_tempulimit] = 50;
 	Treatdata[ID_templlimit] = 0;
-	
+	Treatdata[ID_ufgoal] = 4800; // added default to check uf func
+	Treatdata[ID_treattime] = 240;
 	return CL_OK;
 	
 }
@@ -329,16 +330,21 @@ Cl_ReturnCodeType cl_datamamanager(Cl_Mac_EventsType cl_data_event)
 					switch(Cl_ConsoleRxMsg.data.byte[1])
 					{
 						case ID_dflow:
+						Treatdata[ID_dflow] = (datastream.word);
 						break;
 						case ID_settemp:
+							Treatdata[ID_settemp] = (datastream.word);
 						break;
 						case ID_heprate:
 						break;
 						case ID_setcond:
+							Treatdata[ID_setcond] = (datastream.word);
 						break;
 						case ID_ufrate:
+						Treatdata[ID_ufrate] = (datastream.word)/10; // added to get uf rate from ui
 						break;
 						case ID_ufgoal:
+						Treatdata[ID_ufgoal] = datastream.word; // added to get uf goal data from ui
 						break;
 						case ID_bolusvol:
 						break;
@@ -353,6 +359,7 @@ Cl_ReturnCodeType cl_datamamanager(Cl_Mac_EventsType cl_data_event)
 						case ID_minufrate:
 						break;
 						case ID_treattime:
+						Treatdata[ID_treattime] = datastream.word;
 						break;
 						case ID_bloodratereturn:
 						break;

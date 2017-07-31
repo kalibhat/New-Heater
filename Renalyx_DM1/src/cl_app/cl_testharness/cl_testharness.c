@@ -57,7 +57,9 @@ extern Cl_ReturnCodeType 	Cl_Mac_GetSystem_Status_Query(void);
 extern void sv_prop_startmixing(void);
 extern void sv_prop_stopmixing(void);
 extern void sv_prop_startpropeo_aligning(void);
-extern void sv_prop_set_propro_rc(Cl_Uint8Type data);
+extern void sv_prop_set_propo_ACIDrc(Cl_Uint16Type data);
+extern void sv_prop_set_propo_BICARBrc(Cl_Uint16Type data);
+extern void sv_prop_set_propo_CONDUCTIVITY(Cl_Uint16Type data);
 
 extern Cl_Uint8Type sv_cntrl_enable_bypass(void);
 extern Cl_Uint8Type sv_cntrl_disable_bypass(void);
@@ -1560,7 +1562,7 @@ Cl_ReturnCodeType cl_testharnesscommandhandler(Cl_ConsoleMsgType* pCl_ConsoleMsg
 				break;
 		
 		case TEST_SET_PROPO_RC:
-		 sv_prop_set_propro_rc( TestMsg.data.byte[1]);
+		 sv_prop_set_propo_ACIDrc( TestMsg.data.byte[1]);
 		break;
 		case TEST_START_PROPO_ALIGN:
 		

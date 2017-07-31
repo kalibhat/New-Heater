@@ -49,7 +49,8 @@ Cl_ReturnCodeType Cl_dprep_StopMixing(void);
 
 Cl_ReturnCodeType cl_dprep_activate_prime_related_alarms(void);
 Cl_ReturnCodeType  Cl_dprepSendAlarm(Cl_NewAlarmIdType cl_dprepalarmId );
-
-
+Cl_ReturnCodeType Cl_Check_Temp_Cond_Stability();
+Cl_ReturnCodeType Cl_deactivate_prep_alarms();
+Cl_ReturnCodeType Cl_Dprep_Priming_Stop();
 
 #endif /* CL_DPREP_CONTROLLER_PROTO_H_ */

@@ -295,6 +295,7 @@ C_SRCS +=  \
 ../src/cl_app/comp/heparinpumpcontrl/cl_heparincontroller.c \
 ../src/cl_app/comp/heparinpumpcontrl/cl_heparinfeedback.c \
 ../src/cl_app/comp/levelswichcntrl/cl_level_switchcontroller.c \
+../src/cl_app/comp/ufpumpcontrl/cl_IsoufPumpController.c \
 ../src/cl_app/comp/ufpumpcontrl/cl_ufPumpFeedback.c \
 ../src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.c \
 ../src/Platform/Drivers/DD_ADC/DD_ADC.c \
@@ -399,6 +400,7 @@ src/cl_app/comp/flowswitchcntrl/flowswitchcntrl.o \
 src/cl_app/comp/heparinpumpcontrl/cl_heparincontroller.o \
 src/cl_app/comp/heparinpumpcontrl/cl_heparinfeedback.o \
 src/cl_app/comp/levelswichcntrl/cl_level_switchcontroller.o \
+src/cl_app/comp/ufpumpcontrl/cl_IsoufPumpController.o \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpFeedback.o \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.o \
 src/Platform/Drivers/DD_ADC/DD_ADC.o \
@@ -496,6 +498,7 @@ src/cl_app/comp/flowswitchcntrl/flowswitchcntrl.o \
 src/cl_app/comp/heparinpumpcontrl/cl_heparincontroller.o \
 src/cl_app/comp/heparinpumpcontrl/cl_heparinfeedback.o \
 src/cl_app/comp/levelswichcntrl/cl_level_switchcontroller.o \
+src/cl_app/comp/ufpumpcontrl/cl_IsoufPumpController.o \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpFeedback.o \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.o \
 src/Platform/Drivers/DD_ADC/DD_ADC.o \
@@ -593,6 +596,7 @@ src/cl_app/comp/flowswitchcntrl/flowswitchcntrl.d \
 src/cl_app/comp/heparinpumpcontrl/cl_heparincontroller.d \
 src/cl_app/comp/heparinpumpcontrl/cl_heparinfeedback.d \
 src/cl_app/comp/levelswichcntrl/cl_level_switchcontroller.d \
+src/cl_app/comp/ufpumpcontrl/cl_IsoufPumpController.d \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpFeedback.d \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.d \
 src/Platform/Drivers/DD_ADC/DD_ADC.d \
@@ -690,6 +694,7 @@ src/cl_app/comp/flowswitchcntrl/flowswitchcntrl.d \
 src/cl_app/comp/heparinpumpcontrl/cl_heparincontroller.d \
 src/cl_app/comp/heparinpumpcontrl/cl_heparinfeedback.d \
 src/cl_app/comp/levelswichcntrl/cl_level_switchcontroller.d \
+src/cl_app/comp/ufpumpcontrl/cl_IsoufPumpController.d \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpFeedback.d \
 src/cl_app/comp/ufpumpcontrl/cl_ufPumpController.d \
 src/Platform/Drivers/DD_ADC/DD_ADC.d \
@@ -758,6 +763,8 @@ LINKER_SCRIPT_DEP+=  \
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
