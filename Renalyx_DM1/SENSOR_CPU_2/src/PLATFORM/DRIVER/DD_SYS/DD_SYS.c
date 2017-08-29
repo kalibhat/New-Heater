@@ -163,7 +163,7 @@ uint16_t DD_INIT_ALL_SENSORS()   {
 	DD_SPI_PCS_DECODER_ACTIVE();
     DD_DISABLE_ISOLATORS_MISO_PIN();
 	DD_ENABLE_ISOLATOR_1();	
-	 for(int i=0; i < 10000;i++) {}
+	 for(int i=0; i < 1000;i++) {}
 
 	DD_TS1_INIT();
     DD_TS2_INIT();	
@@ -179,16 +179,16 @@ uint16_t DD_INIT_ALL_SENSORS()   {
  	DD_SPI_PCS_DECODER_ACTIVE();	
 	DD_DISABLE_ISOLATORS_MISO_PIN();
 	DD_ENABLE_ISOLATOR_2();	
-	for(int i=0; i<10000;i++) {}
+	for(int i=0; i<1000;i++) {}
 	
 	DD_CS3_TS_INIT();
 	DD_TS3_INIT(); 	
-// 	DD_SPARE_TS_CHIP_SELECT();
-	
+// // 	DD_SPARE_TS_CHIP_SELECT();
+// 	
 	DD_SPI_PCS_DECODER_DEACTIVE();
  	DD_DISABLE_ISOLATORS_MISO_PIN();
-	 for(int i=0; i<10000;i++) {}
-	    
+	 for(int i=0; i<1000;i++) {}
+// 	    
 	  /************************************************************************/
 	  /* CONDUCTIVITY_SENSOR_digital_POT_INIT_DONE HERE                                                                     */
 	  /************************************************************************/
@@ -403,7 +403,7 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
 			   dd_spi_master_read(&command_data_array, 3, ISOLTR_1_CS_ID);
 			   spi_data.bytearray[1]=command_data_array[1];
 			   spi_data.bytearray[0]=command_data_array[2];
-			   sensor_status = spi_data.Twobyte;
+			   *sensor_status = spi_data.Twobyte;
 		   
 		   DD_SPI_PCS_DECODER_DEACTIVE();
 		   DD_DISABLE_ISOLATORS_MISO_PIN();	
@@ -501,27 +501,14 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   { ; }
+			for(unsigned int count=0; count<1000; count++ )   { ; }				
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
 		   command_data_array[1] = 0;  
 		    dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
 		   spi_data.bytearray[1]=command_data_array[0];
            spi_data.bytearray[0]=command_data_array[1];			
-           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;		
-		   
-		      
-		    conductivity_mux_reg_1  &= ~CS1_GAIN_Msk ;
-			conductivity_mux_reg_1 |=  CS1_GAIN_X100;
-	        command_data_array[0] = conductivity_mux_reg_1; 
-			GAIN_FACTOR = 100;			
-				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_2();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
-			for(unsigned int count=0; count<500000; count++ )   {
-		                      ;
-	                        }
-			
+           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;		   
+
 			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS1_SEN_RMS_CURRENT);
 		   command_data_array[1] = 0;  		   
             DD_SPI_PCS_DECODER_ACTIVE();
@@ -530,95 +517,17 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			
-			
+			for(unsigned int count=0; count<1000; count++ )   {;}				
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS1_SEN_RMS_CURRENT);
 		   command_data_array[1] = 0;  
 		   dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
 		   spi_data.bytearray[1]=command_data_array[0];
-           spi_data.bytearray[0]=command_data_array[1];	
-		   
+           spi_data.bytearray[0]=command_data_array[1];			   
 		    uint16_t CS1_SEN_RMS_CURRENT;		
             CS1_SEN_RMS_CURRENT = spi_data.Twobyte;	
-		   	*sensor_status = (CS1_SEN_RMS_CURRENT*1000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;
-            if(*sensor_status < 500)   {
-				
-				       conductivity_mux_reg_1  &= ~CS1_GAIN_Msk ;
-			           conductivity_mux_reg_1 |=  CS1_GAIN_X1000;
-	                   command_data_array[0] = conductivity_mux_reg_1; 
-			           GAIN_FACTOR = 1000;			
-				 
-	                   dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	                   DD_AN_MUX_CHIPSEL_2();
-	                   dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
-					   for(unsigned int count=0; count<50000; count++ )   {
-		                ;
-	                     }
-			
-			           command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS1_SEN_RMS_CURRENT);
-		               command_data_array[1] = 0;  		   
-                       DD_SPI_PCS_DECODER_ACTIVE();
-                       DD_CON_ADC_CHIP_SELECT();
-			           DD_DISABLE_ISOLATORS_MISO_PIN();
-                       DD_ENABLE_ISOLATOR_3();
-                       dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
-                       dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			           for(unsigned int count=0; count<1000; count++ )   {
-		                      ;
-	                   }
-					    command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS1_SEN_RMS_CURRENT);
-		                command_data_array[1] = 0;  
-		                dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
-		                spi_data.bytearray[1]=command_data_array[0];
-                        spi_data.bytearray[0]=command_data_array[1];			
-                        CS1_SEN_RMS_CURRENT = spi_data.Twobyte;	
-		            	*sensor_status = (CS1_SEN_RMS_CURRENT*1000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;
-						
-					     if(*sensor_status < 1000)   {
-				
-				            conductivity_mux_reg_1  &= ~CS1_GAIN_Msk ;
-			                conductivity_mux_reg_1 |=  CS1_GAIN_X10000;
-	                         command_data_array[0] = conductivity_mux_reg_1; 
-			                GAIN_FACTOR = 100000;			
-				 
-	                        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	                        DD_AN_MUX_CHIPSEL_2();
-	                        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
-							
-						//DELAY NEED TO BE INSERTED
-			
-			
-			                command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS1_SEN_RMS_CURRENT);
-		                    command_data_array[1] = 0;  		   
-                            DD_SPI_PCS_DECODER_ACTIVE();
-                            DD_CON_ADC_CHIP_SELECT();
-			                DD_DISABLE_ISOLATORS_MISO_PIN();
-                            DD_ENABLE_ISOLATOR_3();
-                            dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
-                            dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			                for(unsigned int count=0; count<1000; count++ )   {
-		                      ;
-	                        }
-					        command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS1_SEN_RMS_CURRENT);
-		                   command_data_array[1] = 0;  
-		                   dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
-		                   spi_data.bytearray[1]=command_data_array[0];
-                           spi_data.bytearray[0]=command_data_array[1];			
-                           CS1_SEN_RMS_CURRENT = spi_data.Twobyte;	
-		            	   *sensor_status = (CS1_SEN_RMS_CURRENT*1000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;
-		     	       }	
-			  }
-			
-			
-		   
-				
+		   	*sensor_status = (CS1_SEN_RMS_CURRENT*1000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;				
             DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-	        
-		   
+            DD_DISABLE_ISOLATORS_MISO_PIN();		   
 		break;
 
    
@@ -632,24 +541,13 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
+			for(unsigned int count=0; count<1000; count++ )   {;}
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
 		   command_data_array[1] = 0;  
 		    dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
 		   spi_data.bytearray[1]=command_data_array[0];
            spi_data.bytearray[0]=command_data_array[1];			
-           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;		
-		   
-		      
-		    conductivity_mux_reg_1  &= ~CS2_GAIN_Msk ;
-			conductivity_mux_reg_1 |=  CS2_GAIN_X10000;
-	        command_data_array[0] = conductivity_mux_reg_1; 			
-				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_2();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
+           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;	       
 			
 			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS2_SEN_RMS_CURRENT);
 		   command_data_array[1] = 0;  		   
@@ -659,26 +557,19 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			uint16_t CS2_SEN_RMS_CURRENT;
-			
+			for(unsigned int count=0; count<1000; count++ )   {;}
+			uint16_t CS2_SEN_RMS_CURRENT;			
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS2_SEN_RMS_CURRENT);
 		   command_data_array[1] = 0;  
 		   dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
 		   spi_data.bytearray[1]=command_data_array[0];
            spi_data.bytearray[0]=command_data_array[1];			
            CS2_SEN_RMS_CURRENT = spi_data.Twobyte;	
-		   	*sensor_status = (CS2_SEN_RMS_CURRENT*1000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;
-            
+		   	*sensor_status = (CS2_SEN_RMS_CURRENT*1000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;            
             DD_SPI_PCS_DECODER_DEACTIVE();
             DD_DISABLE_ISOLATORS_MISO_PIN();
 			
-		break;
-
-  
-		  
+		break;		  
 		
 		case SV_CS3_ID:
 		 command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
@@ -689,56 +580,27 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
+			for(unsigned int count=0; count<1000; count++ )   {;}
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
 		   command_data_array[1] = 0;  
 		    dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
 		   spi_data.bytearray[1]=command_data_array[0];
            spi_data.bytearray[0]=command_data_array[1];			
-           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;				    
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-			
-			
-			
-			
-			conductivity_mux_reg_3  &= ~CS3_GAIN_Msk ;
-			conductivity_mux_reg_3 |=  CS3_GAIN_X500;
-	        command_data_array[0] = conductivity_mux_reg_3;
-			 	
-			//DD_ENABLE_ISOLATOR_4();
-			DD_SPI_PCS_DECODER_ACTIVE();				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_4_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_4();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_4_CS_ID);
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();	
-			
+           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;				
 			
 			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS3_SEN_RMS_CURRENT);
-		    command_data_array[1] = 0;  		   
-            DD_SPI_PCS_DECODER_ACTIVE();
-            DD_CON_ADC_CHIP_SELECT();
-			DD_DISABLE_ISOLATORS_MISO_PIN();
-            DD_ENABLE_ISOLATOR_3();
+		    command_data_array[1] = 0;            
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			uint16_t CS3_SEN_RMS_CURRENT;
-			
+			for(unsigned int count=0; count<1000; count++ )   {;}
+			uint16_t CS3_SEN_RMS_CURRENT;			
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CS3_SEN_RMS_CURRENT);
 		   command_data_array[1] = 0;  
 		   dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
 		   spi_data.bytearray[1]=command_data_array[0];
            spi_data.bytearray[0]=command_data_array[1];			
            CS3_SEN_RMS_CURRENT = spi_data.Twobyte;	
+		   
 		   *sensor_status = (CS3_SEN_RMS_CURRENT*10000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;            
             DD_SPI_PCS_DECODER_DEACTIVE();
             DD_DISABLE_ISOLATORS_MISO_PIN();
@@ -747,133 +609,76 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
 		break;
 		
 		case SV_DAC1_ID:
-	        command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
-		    command_data_array[1] = 0;  		   
-            DD_SPI_PCS_DECODER_ACTIVE();
-            DD_CON_ADC_CHIP_SELECT();
-			DD_DISABLE_ISOLATORS_MISO_PIN();
-            DD_ENABLE_ISOLATOR_3();
-            dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
-            dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
-		   command_data_array[1] = 0;  
-		    dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
-		   spi_data.bytearray[1]=command_data_array[0];
-           spi_data.bytearray[0]=command_data_array[1];			
-           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;				    
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-			
-			
-			
-			
-			conductivity_mux_reg_2  &= ~DAC1_GAIN_Msk ;
-			conductivity_mux_reg_2 |= DAC1_GAIN_X100;
-	        command_data_array[0] = conductivity_mux_reg_2;
-			 	
-			//DD_ENABLE_ISOLATOR_4();
-			DD_SPI_PCS_DECODER_ACTIVE();				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_3();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();	
-			
-			
-			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAC1_SEN_RMS_CURRENT);
-		    command_data_array[1] = 0;  		   
-            DD_SPI_PCS_DECODER_ACTIVE();
-            DD_CON_ADC_CHIP_SELECT();
-			DD_DISABLE_ISOLATORS_MISO_PIN();
-            DD_ENABLE_ISOLATOR_3();
-            dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
-            dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			uint16_t DAC1_SEN_RMS_CURRENT;
-			
-		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAC1_SEN_RMS_CURRENT);
-		   command_data_array[1] = 0;  
-		   dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
-		   spi_data.bytearray[1]=command_data_array[0];
-           spi_data.bytearray[0]=command_data_array[1];			
-           DAC1_SEN_RMS_CURRENT = spi_data.Twobyte;	
-		   *sensor_status = (DAC1_SEN_RMS_CURRENT*10000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;            
-            DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-		break;
 		
-		case SV_DAA_ID:
-		command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
-		   command_data_array[1] = 0;  		   
-            DD_SPI_PCS_DECODER_ACTIVE();
-            DD_CON_ADC_CHIP_SELECT();
-			DD_DISABLE_ISOLATORS_MISO_PIN();
-            DD_ENABLE_ISOLATOR_3();
-            dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
-            dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
-		   command_data_array[1] = 0;  
-		    dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
-		   spi_data.bytearray[1]=command_data_array[0];
-           spi_data.bytearray[0]=command_data_array[1];			
-           CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;				    
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-			
-			
-			
-			
-			conductivity_mux_reg_2  &= ~DAA_GAIN_2_Msk ;
-			conductivity_mux_reg_2 |=  DAA_GAIN_X10000;
-	        command_data_array[0] = conductivity_mux_reg_2;
-			 	
-			//DD_ENABLE_ISOLATOR_4();
-			DD_SPI_PCS_DECODER_ACTIVE();				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_3();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();	
-			
-			
-			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAA_SEN_RMS_CURRENT);
-		    command_data_array[1] = 0;  		   
-            DD_SPI_PCS_DECODER_ACTIVE();
-            DD_CON_ADC_CHIP_SELECT();
-			DD_DISABLE_ISOLATORS_MISO_PIN();
-            DD_ENABLE_ISOLATOR_3();
-            dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
-            dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			uint16_t DAA_SEN_RMS_CURRENT;
-			
-		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAC2_SEN_RMS_CURRENT);
-		   command_data_array[1] = 0;  
-		   dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
-		   spi_data.bytearray[1]=command_data_array[0];
-           spi_data.bytearray[0]=command_data_array[1];			
-           DAA_SEN_RMS_CURRENT = spi_data.Twobyte;	
-		   *sensor_status = (DAA_SEN_RMS_CURRENT*10000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;            
-            DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-	
-		break;
+		
+	         command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
+	         command_data_array[1] = 0;
+	         DD_SPI_PCS_DECODER_ACTIVE();
+	         DD_CON_ADC_CHIP_SELECT();
+	         DD_DISABLE_ISOLATORS_MISO_PIN();
+	         DD_ENABLE_ISOLATOR_3();
+	         dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
+	         dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
+	         for(unsigned int count=0; count<1000; count++ )   {
+		         ;
+	         }
+	         command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
+	         command_data_array[1] = 0;
+	         dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
+	         spi_data.bytearray[1]=command_data_array[0];
+	         spi_data.bytearray[0]=command_data_array[1];
+	         CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;
+	         // 			DD_SPI_PCS_DECODER_DEACTIVE();
+	         //             DD_DISABLE_ISOLATORS_MISO_PIN();
+	         
+	         
+	         
+	         
+	         // 			conductivity_mux_reg_2  &= ~DAC1_GAIN_Msk ;
+	         // 			conductivity_mux_reg_2 |= DAC1_GAIN_X100;
+	         // 	        command_data_array[0] = conductivity_mux_reg_2;
+	         
+	         //DD_ENABLE_ISOLATOR_4();
+	         // 			DD_SPI_PCS_DECODER_ACTIVE();
+	         // 	        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
+	         // 	        DD_AN_MUX_CHIPSEL_3();
+	         // 	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
+	         // 			for(unsigned int count=0; count<1000; count++ )   {
+	         // 		      ;
+	         // 	        }
+	         // 			DD_SPI_PCS_DECODER_DEACTIVE();
+	         //             DD_DISABLE_ISOLATORS_MISO_PIN();
+	         
+	         
+	         command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAC1_SEN_RMS_CURRENT);
+	         command_data_array[1] = 0;
+	         DD_SPI_PCS_DECODER_ACTIVE();
+	         DD_CON_ADC_CHIP_SELECT();
+	         DD_DISABLE_ISOLATORS_MISO_PIN();
+	         DD_ENABLE_ISOLATOR_3();
+	         dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
+	         dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
+	         for(unsigned int count=0; count<1000; count++ )   {
+		         ;
+	         }
+	         uint16_t DAC1_SEN_RMS_CURRENT;
+	         float DAC1_RESISTANCE, DAC1_CONDUCTANCE;
+	         
+	         command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAC1_SEN_RMS_CURRENT);
+	         command_data_array[1] = 0;
+	         dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
+	         spi_data.bytearray[1]=command_data_array[0];
+	         spi_data.bytearray[0]=command_data_array[1];
+	         DAC1_SEN_RMS_CURRENT = spi_data.Twobyte;
+	         DAC1_SEN_RMS_CURRENT;
+	         DAC1_RESISTANCE =  (CONDUCTIVITY_SENSOR_RMS_VOLTAGE *1000) / (DAC1_SEN_RMS_CURRENT) ;
+	         DAC1_RESISTANCE =  DAC1_RESISTANCE - 150;
+	         DAC1_CONDUCTANCE = (1/DAC1_RESISTANCE)*1000000 ;
+	         
+	         *sensor_status =  (uint16_t)DAC1_CONDUCTANCE;  //(DAC1_SEN_RMS_CURRENT*2000)/ CONDUCTIVITY_SENSOR_RMS_VOLTAGE;
+	         DD_SPI_PCS_DECODER_DEACTIVE();
+	         DD_DISABLE_ISOLATORS_MISO_PIN();
+	         break;
 		
 		case SV_DAB_ID:
 	command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
@@ -884,9 +689,7 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
+			for(unsigned int count=0; count<1000; count++ )   { ; }
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_CONDUCTIVITY_SENSOR_RMS_VOLTAGE);
 		   command_data_array[1] = 0;  
 		    dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);
@@ -894,26 +697,7 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
            spi_data.bytearray[0]=command_data_array[1];			
            CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;				    
 			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-			
-			
-			
-			
-			conductivity_mux_reg_2  &= ~DAB_GAIN_Msk ;
-			conductivity_mux_reg_2 |=  DAB_GAIN_X10000;
-	        command_data_array[0] = conductivity_mux_reg_2;
-			 	
-			//DD_ENABLE_ISOLATOR_4();
-			DD_SPI_PCS_DECODER_ACTIVE();				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_3();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_3_CS_ID);
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();	
-			
+            DD_DISABLE_ISOLATORS_MISO_PIN();			
 			
 			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAB_SEN_RMS_CURRENT);
 		    command_data_array[1] = 0;  		   
@@ -923,9 +707,7 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
             DD_ENABLE_ISOLATOR_3();
             dd_spi_set_peripheral_chip_select_value(ISOLTR_3_CS_ID);
             dd_spi_master_read(&command_data_array, 2, ISOLTR_3_CS_ID);		           
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
+			for(unsigned int count=0; count<1000; count++ )   {;}
 			uint16_t DAB_SEN_RMS_CURRENT;
 			
 		   command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAB_SEN_RMS_CURRENT);
@@ -959,25 +741,7 @@ sensor_status_t DD_READ_SENSORS(sv_sensortype ID_SENSOR, uint16_t *sensor_status
            spi_data.bytearray[0]=command_data_array[1];			
            CONDUCTIVITY_SENSOR_RMS_VOLTAGE = spi_data.Twobyte;				    
 			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();
-			
-			
-			
-			
-			conductivity_mux_reg_3  &= ~DAC2_GAIN_Msk ;
-			conductivity_mux_reg_3 |=  DAC2_GAIN_X500;
-	        command_data_array[0] = conductivity_mux_reg_3;
-			 	
-			//DD_ENABLE_ISOLATOR_4();
-			DD_SPI_PCS_DECODER_ACTIVE();				 
-	        dd_spi_set_peripheral_chip_select_value(ISOLTR_4_CS_ID);	 	 
-	        DD_AN_MUX_CHIPSEL_4();
-	        dd_spi_master_transfer(&command_data_array, 1, ISOLTR_4_CS_ID);
-			for(unsigned int count=0; count<1000; count++ )   {
-		      ;
-	        }
-			DD_SPI_PCS_DECODER_DEACTIVE();
-            DD_DISABLE_ISOLATORS_MISO_PIN();	
+            DD_DISABLE_ISOLATORS_MISO_PIN();		
 			
 			
 			command_data_array[0] = ADC128S022_ADC_IP(ADC128S022_DAC2_SEN_RMS_CURRENT);

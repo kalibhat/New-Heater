@@ -11,6 +11,6 @@
 
 
 
-
+float cl_utilities_CalConductivity(uint16_t ,float);
 
 #endif /* CL_UTILITIES_H_ */

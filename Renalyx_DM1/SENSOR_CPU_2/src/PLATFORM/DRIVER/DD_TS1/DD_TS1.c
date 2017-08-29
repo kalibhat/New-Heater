@@ -20,7 +20,7 @@ void DD_TS1_INIT() {
 	  dd_spi_set_peripheral_chip_select_value(ISOLTR_1_CS_ID); //(ISOLTR_1_CS_ID);
 	  dd_spi_master_transfer(&command_data_array, 2,0 ); //ISOLTR_1_CS_ID
 	  
-	  for(unsigned int count=0; count<10000000; count++ )   {
+	  for(unsigned int count=0; count<1000; count++ )   {
 		  ;
 	  } 	  
 }

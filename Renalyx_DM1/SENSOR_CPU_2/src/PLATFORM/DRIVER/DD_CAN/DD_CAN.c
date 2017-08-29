@@ -32,12 +32,11 @@
 #define CAN_MID_MIDvA_dd(value) ((0x1FFC0000 & ((value) << 18)))
 #define CAN_MFID_MFID_VA_dd(value)  ((0x1FFC0000 & ((value) << 18)))
 #define CAN_MCR_MDLC_dd(value) (( (0xfu << 16) & ((value) << 16)))
-//#define CAN_MASK 0x7FF
+#define CAN_MASK 0x7FC
 
 
 sn65hvd530_ctrl_t  can0_transceiver ;
 uint8_t volatile group_id_reg;
-uint8_t volatile group_id_reg_id0 = 255, group_id_reg_id1 = 255 , group_id_reg_id2 = 255 , group_id_reg_id3 = 255 , group_id_reg_id4 = 255 , group_id_reg_id5 = 255 , group_id_reg_id6 =255 , group_id_reg_id7 = 255;
 
 can_mb_conf_t can0_mailbox;
 volatile uint32_t g_ul_recv_status = 0;
@@ -97,38 +96,31 @@ static void dd_can_extract_mailbox_data(can_mb_conf_t *p_mailbox )   {
 		      case Sensor_status_query :
 			     master_requested_sensor_data =1;
 				 group_id_reg = 0;	
-				 group_id_reg_id0 = 1;
 			  break;
 			    
 		      case Sensor_status_group_id_1: 
 					group_id_reg = SENSOR_GROUP_ID_1;					
 		            master_requested_sensor_data =1; 
-					group_id_reg_id1 = 1;
 			  break; 
 			  case Sensor_status_group_id_2: 
 			     group_id_reg =SENSOR_GROUP_ID_2;					
 		         master_requested_sensor_data =1; 
-				 group_id_reg_id2 = 1;
 			  break;     
 			  case Sensor_status_group_id_3: 
 				group_id_reg = SENSOR_GROUP_ID_3;					
 		        master_requested_sensor_data =1; 
-				group_id_reg_id3 = 1;
 			  break;  
 			  case Sensor_status_group_id_4: 
 				 group_id_reg = SENSOR_GROUP_ID_4;					
 		         master_requested_sensor_data =1; 
-				 group_id_reg_id4 = 1;
 			  break;    
 			  case Sensor_status_group_id_5: 
 			     group_id_reg = SENSOR_GROUP_ID_5;					
 		         master_requested_sensor_data =1; 
-				 group_id_reg_id5 = 1;
 			  break;   
 			  case Sensor_status_group_id_6: 
 			     group_id_reg =SENSOR_GROUP_ID_6;					
 		         master_requested_sensor_data =1; 
-				 group_id_reg_id6 = 1;
 			  break;   
 	          			
 	          default:

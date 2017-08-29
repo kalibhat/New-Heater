@@ -638,11 +638,12 @@ switch(cl_rinsestate)
 								
 								Cl_Uint16Type sensordata;
 								Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP1STATUS, &sensordata);
-												uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
-												res_temp_lookuptable(cal_data);
-												 uint16_t temp = res_temp_value /10;
-												
-												temp = temp - 25 +12;
+// 												uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
+// 												res_temp_lookuptable(cal_data);
+// 												 uint16_t temp = res_temp_value /10;
+// 												
+// 					//							temp = temp - 25 +12 + 2.5;
+										uint16_t temp = sensordata /10;
 												
 										cl_Datastreamtype  cl_tdata;
 										cl_tdata.word = 0;
@@ -1801,12 +1802,15 @@ Cl_ReturnCodeType Cl_Rinse_SendRinseStateData(void)
 				Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&sensordata);
 				{
 				float ftemp,ftemp1,temp1;
-
-				uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
-				res_temp_lookuptable(cal_data);
-				tmp2 =	(tmp2*5 + res_temp_value)/6;
-				uint16_t temp = tmp2/10;
-				temp = temp - 31 + 14;										// sensor offset
+// 
+// 				uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
+// 				res_temp_lookuptable(cal_data);
+// 				tmp2 =	(tmp2*5 + res_temp_value)/6;
+// 				uint16_t temp = tmp2/10;
+// //				temp = temp - 31 + 14;										// sensor offset
+// 				temp = temp - 0.4 ;										// sensor offset
+				temp = (float)sensordata /10;
+				
 				cond_comp= cond/(1+(temp/10-25.0)*0.021);
 				
 				// code used in dialysis for conductivity
@@ -1840,11 +1844,14 @@ Cl_ReturnCodeType Cl_Rinse_SendRinseStateData(void)
 				float ftemp,ftemp1,temp1;
 
 				uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
-				res_temp_lookuptable(cal_data);
-			//	tmp3 =	(tmp3*5 + res_temp_value)/6;
-				uint16_t temp = res_temp_value/10;
-				temp = temp - 31 + 14;										// sensor offset			
-				tmp3 =(tmp3*5 + temp)/6;
+// 				res_temp_lookuptable(cal_data);
+// 			//	tmp3 =	(tmp3*5 + res_temp_value)/6;
+// 				uint16_t temp = res_temp_value/10;
+// //				temp = temp - 31 + 14;										// sensor offset
+// //				temp = temp - 31 -20;										// sensor offset				
+// //				tmp3 =(tmp3*5 + temp)/6;
+// 				tmp3 = temp - 0.4;
+				tmp3 = sensordata /10;
 				data.fourbytedata = (uint16_t)(tmp3 );
 				dataarray[count++] = data.bytedata[0];
 				dataarray[count++] = data.bytedata[1];

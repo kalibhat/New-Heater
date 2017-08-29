@@ -412,8 +412,8 @@ PIOB->PIO_OER = 1 << 19 ; //TEST
 							break;
 							case PROP_START_OPENFILL:
 					//		startTimer1(TC0,2,TC2_IRQn,stepcount);
-								rc=180;
-								bic_rc=180;
+								rc=170;
+								bic_rc=170;
 								start_acidpump();
 								start_bicarpump();
 								state_3 =CPU3_STANDBY;
@@ -455,8 +455,8 @@ PIOB->PIO_OER = 1 << 19 ; //TEST
 								//printf("start\n");
 								//rc=184;
 								//bic_rc=184;
- 								rc=210;
- 								bic_rc=210;
+ 								rc=195;   //273, 205 = 4 rotations per sec, 164 = 5rps, 136 =6 rps, 195 = 4.2 rps
+ 								bic_rc=195;   
 							//	rc=250;
 							//	bic_rc=250;
 								start_acidpump();

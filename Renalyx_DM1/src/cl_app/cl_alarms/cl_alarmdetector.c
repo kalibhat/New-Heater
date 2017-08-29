@@ -259,7 +259,7 @@ Cl_ReturnCodeType Cl_Alarm_translate_sensor_values(void)
 		res_temp_lookuptable(cal_data);
 		
 		uint16_t temp = res_temp_value/100;
-		temp = temp - 2.5;
+		temp = temp - 2.5- 0.25;
 								
 		temp1 = ((temp1* 4) +temp)/5;
 		//temp1=temp1*10;
@@ -279,7 +279,7 @@ Cl_ReturnCodeType Cl_Alarm_translate_sensor_values(void)
 				uint16_t temp = res_temp_value/100;
 
 		
-					temp = temp - 9;
+					temp = temp - 25+0.81;
 	
 				
 				
@@ -298,7 +298,7 @@ Cl_ReturnCodeType Cl_Alarm_translate_sensor_values(void)
 				res_temp_lookuptable(cal_data);
 				
 				uint16_t temp = res_temp_value/100;
-				temp = temp - 2.5;
+				temp = temp - 0.4;
 				
 				temp3 = ((temp3* 4) +temp)/5;
 		//temp3=temp3*10;

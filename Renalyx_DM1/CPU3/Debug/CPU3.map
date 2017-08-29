@@ -10721,7 +10721,7 @@ OUTPUT(CPU3.elf elf32-littlearm)
  .debug_line    0x0001610f      0x978 src/ASF/sam/utils/cmsis/sam3x/source/templates/system_sam3x.o
  .debug_line    0x00016a87      0x3db src/ASF/sam/utils/syscalls/gcc/syscalls.o
 
-.debug_str      0x00000000    0x624d8
+.debug_str      0x00000000    0x62514
  .debug_str     0x00000000    0x5d99a src/Platform/Driver/CLOCK/D_CLOCK.o
                               0x5dd35 (size before relaxing)
  .debug_str     0x0005d99a      0xec0 src/Platform/Driver/DD_CAN/D_CAN.o
@@ -10754,25 +10754,25 @@ OUTPUT(CPU3.elf elf32-littlearm)
                               0x59706 (size before relaxing)
  .debug_str     0x0005fb79      0xaff src/ASF/sam/drivers/usart/usart.o
                               0x59fdf (size before relaxing)
- .debug_str     0x00060678      0x703 src/CPU3.o
-                              0x5f18b (size before relaxing)
- .debug_str     0x00060d7b      0x160 src/ASF/common/services/clock/sam3x/sysclk.o
+ .debug_str     0x00060678      0x73f src/CPU3.o
+                              0x5f198 (size before relaxing)
+ .debug_str     0x00060db7      0x160 src/ASF/common/services/clock/sam3x/sysclk.o
                               0x5d012 (size before relaxing)
- .debug_str     0x00060edb       0x5c src/ASF/sam/boards/arduino_due_x/init.o
+ .debug_str     0x00060f17       0x5c src/ASF/sam/boards/arduino_due_x/init.o
                               0x5d7cc (size before relaxing)
- .debug_str     0x00060f37      0x406 src/ASF/sam/drivers/pio/pio.o
+ .debug_str     0x00060f73      0x406 src/ASF/sam/drivers/pio/pio.o
                               0x59d22 (size before relaxing)
- .debug_str     0x0006133d      0x12d src/ASF/sam/drivers/pio/pio_handler.o
+ .debug_str     0x00061379      0x12d src/ASF/sam/drivers/pio/pio_handler.o
                               0x59d6e (size before relaxing)
- .debug_str     0x0006146a      0x674 src/ASF/sam/drivers/pmc/pmc.o
+ .debug_str     0x000614a6      0x674 src/ASF/sam/drivers/pmc/pmc.o
                               0x59d65 (size before relaxing)
- .debug_str     0x00061ade       0x4d src/ASF/sam/utils/cmsis/sam3x/source/templates/exceptions.o
+ .debug_str     0x00061b1a       0x4d src/ASF/sam/utils/cmsis/sam3x/source/templates/exceptions.o
                               0x4c83f (size before relaxing)
- .debug_str     0x00061b2b       0xb2 src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc/startup_sam3x.o
+ .debug_str     0x00061b67       0xb2 src/ASF/sam/utils/cmsis/sam3x/source/templates/gcc/startup_sam3x.o
                               0x4c928 (size before relaxing)
- .debug_str     0x00061bdd      0x1cd src/ASF/sam/utils/cmsis/sam3x/source/templates/system_sam3x.o
+ .debug_str     0x00061c19      0x1cd src/ASF/sam/utils/cmsis/sam3x/source/templates/system_sam3x.o
                               0x4cb3b (size before relaxing)
- .debug_str     0x00061daa      0x72e src/ASF/sam/utils/syscalls/gcc/syscalls.o
+ .debug_str     0x00061de6      0x72e src/ASF/sam/utils/syscalls/gcc/syscalls.o
                                0x694c (size before relaxing)
 
 .debug_frame    0x00000000     0x4234

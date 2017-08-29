@@ -44,6 +44,7 @@ typedef union  {
 void SV_get_sensor_data(SV_Sensor_status_type* sensor_struct);
 bool SV_put_sensor_data(SV_Sensor_status_type* sensor_struct);
 void SV_SENSOR_DATA(void);
+uint16_t Temp_Averaging(uint16_t temp,uint8_t temp_ID);
 
 
 

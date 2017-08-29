@@ -1306,11 +1306,15 @@ Cl_ReturnCodeType Cl_Disinf_SendDisinfStateData(void)
 		
 		float ftemp,temp1;
 		data.word = 0;
-						// resistance of PT100
-			res_temp_lookuptable((402 *100* temp)/(2*32768));									// temperature from look up table in 4 digits
-			temp1 = res_temp_value/100;									// Temp3 value in XX.yy format
-			temp1 = temp1 - 3.1 + 1.4;										// sensor offset
-			avgtmp3 =(avgtmp3*5 + temp1)/6;
+// 						// resistance of PT100
+// 			res_temp_lookuptable((402 *100* temp)/(2*32768));									// temperature from look up table in 4 digits
+// 			temp1 = res_temp_value/100;									// Temp3 value in XX.yy format
+// //			temp1 = temp1 - 3.1 + 1.4;										// sensor offset
+// //			temp1 = temp1 - 3.1 -2 ;										// sensor offset
+// //			avgtmp3 =(avgtmp3*5 + temp1)/6;
+// 			avgtmp3 = (res_temp_value- 0.4)/10;
+			temp1 = (float)temp/100;
+			avgtmp3 = temp;
 	}
 	
 	Cl_SysStat_GetSensor_Status_Query(SENSOR_COND_STATUS,&temp);

@@ -58,11 +58,13 @@ volatile Cl_Uint8Type temp_data=1,temp_data2=1,temp_data3=1,count_dummy=0,count_
 extern float slope;
 volatile float avgtemp2_dummy=0,avgtemp3_dummy=0,cond_dummy=0;
 
+extern float cl_utilities_CalConductivity(uint16_t ,float);
+
 Cl_ReturnCodeType 		Cl_SysStat_System_Status_Query(void)
 {
 	Cl_ReturnCodeType RetVal;
 	Sys_statusType sv_sys_statbuffer;
-	int16_t temp,temp1;
+	int16_t temp,temp1, raw_data =0, cal_temp =0;
 	
 	 RetVal = cl_memset((Cl_Uint8Type*)&sv_sys_statbuffer , sizeof(sv_sys_statbuffer)) ;
 	 #ifndef PLATFORMSTUB
@@ -100,16 +102,31 @@ Cl_ReturnCodeType 		Cl_SysStat_System_Status_Query(void)
 	cl_sys_statbuffer.ps3status = sv_sys_statbuffer.ps3status;
 	cl_sys_statbuffer.ps4status = sv_sys_statbuffer.ps4status;
 	cl_sys_statbuffer.UFPstatus = sv_sys_statbuffer.UFPstatus;
-	cl_sys_statbuffer.Temp1status = sv_sys_statbuffer.Temp1status;
+//	cl_sys_statbuffer.Temp1status = sv_sys_statbuffer.Temp1status;
+	raw_data = sv_sys_statbuffer.Temp1status;
+	cal_temp  = (402 *100* raw_data)/(2*32768); 
+	res_temp_lookuptable(cal_temp);
+	cl_sys_statbuffer.Temp1status = res_temp_value -80 ;
+				
+				
+//	cl_sys_statbuffer.Temp2status = sv_sys_statbuffer.Temp2status;
+	raw_data = sv_sys_statbuffer.Temp2status;
+	cal_temp  = (402 *100* raw_data)/(2*32768);
+	res_temp_lookuptable(cal_temp);
+	cl_sys_statbuffer.Temp2status = res_temp_value +20;
 	
-				uint16_t cal_data  = (402 *100* sv_sys_statbuffer.Temp1status)/(2*32768); 
-				//cal_data = cal_data*100;
-				res_temp_lookuptable(cal_data);
-				
-				
-	cl_sys_statbuffer.Temp2status = sv_sys_statbuffer.Temp2status;
-	cl_sys_statbuffer.Temp3status = sv_sys_statbuffer.Temp3status;
-	cl_sys_statbuffer.Temp4status = sv_sys_statbuffer.Temp4status;
+//	cl_sys_statbuffer.Temp3status = sv_sys_statbuffer.Temp3status;
+	raw_data = sv_sys_statbuffer.Temp3status;
+	cal_temp  = (402 *100* raw_data)/(2*32768);
+	res_temp_lookuptable(cal_temp);
+	cl_sys_statbuffer.Temp3status = res_temp_value + 20 ;
+	
+//	cl_sys_statbuffer.Temp4status = sv_sys_statbuffer.Temp4status;
+	raw_data = sv_sys_statbuffer.Temp4status;
+	cal_temp  = (402 *100* raw_data)/(2*32768);
+	res_temp_lookuptable(cal_temp);
+	cl_sys_statbuffer.Temp4status = res_temp_value;
+	
 	cl_sys_statbuffer.Flowstatus = sv_sys_statbuffer.Flowstatus;
 	cl_sys_statbuffer.Heparin_full_marker = sv_sys_statbuffer.Heparin_full_marker;
 	cl_sys_statbuffer.Heparin_empty_marker = sv_sys_statbuffer.Heparin_empty_marker;
@@ -457,6 +474,8 @@ void Cl_SysStat_mean_status_update(void)
 	cl_Datastreamtype cl_tdata;
 	int16_t bulk_data[14];
 	uint16_t raw_cond =0;
+	
+	float TS3;
 	static Cl_Uint8Type  flow_counter =0 ;
 	static Cl_Uint16Type counter=0,threeseccounter=0,CS_ontimecnter=0,cnt = 0,levelsw_cnter = 0;
 	if(syncdone)
@@ -467,40 +486,51 @@ void Cl_SysStat_mean_status_update(void)
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP1STATUS, &sensordata);
 			{
 							
-				uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
-				res_temp_lookuptable(cal_data);
-				avgtmp1 =	(avgtmp1*5 + res_temp_value)/6;
-				uint16_t temp = avgtmp1/10;
-				temp = temp - 25 +12;
-				bulk_data[0] = temp;
-				//bulk_data[0] = toggle_count_flow;
+// 				uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
+// 				res_temp_lookuptable(cal_data);
+// //				avgtmp1 =	(avgtmp1*5 + res_temp_value)/6;
+// //				uint16_t temp = avgtmp1/10;
+// //				temp = temp - 25 +12 + 2.5;
+// 				bulk_data[0] = res_temp_value/10;
+// 				//bulk_data[0] = toggle_count_flow;
+				bulk_data[0] = sensordata/10;
 			}
 	
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP2STATUS,&sensordata);
 			{
-					
-				uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
-				res_temp_lookuptable(cal_data);
-				avgtmp2 =	((avgtmp2*5 + res_temp_value)/6 );
-				uint16_t temp = avgtmp2/10;
-			//	temp = temp -45;                                      // commented for machine 2
-				temp = temp - 25 +12;
-				bulk_data[1] = temp;
+// 					
+// 				uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
+// 				res_temp_lookuptable(cal_data);
+// //				avgtmp2 =	((avgtmp2*5 + res_temp_value)/6 );
+// //				uint16_t temp = avgtmp2/10;
+// 				
+// 			//	temp = temp -45;                                      // commented for machine 2
+// 			//	temp = temp - 25 +12;
+// //				temp = temp - 25 + 8.1 ;
+// 				bulk_data[1] = (res_temp_value- 4)/10;
+				bulk_data[1] = sensordata /10;
 			}
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&sensordata);
 			{
-				uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
-				res_temp_lookuptable(cal_data);
-				avgtmp3 =	(avgtmp3*5 + res_temp_value)/6;
-				float temp = avgtmp3/10;
-				temp = temp - 31 + 14;
-				bulk_data[2] = temp;
+// 				uint16_t cal_data  = (402 *100* sensordata)/(2*32768); 
+// 				res_temp_lookuptable(cal_data);
+// //				avgtmp3 =	(avgtmp3*5 + res_temp_value)/6;
+// //				float temp = avgtmp3/10;
+// 				TS3 = (res_temp_value/10) - 0.4;
+// //				TS3 = (res_temp_value/100) - 3.1 - 2;
+// //				TS3 = (avgtmp3/10) - 0.4;
+// 				bulk_data[2] =  (uint16_t)(TS3); // * 10);
+				bulk_data[2] = sensordata/10;
+				TS3 = (float)sensordata /100;
 			}
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_COND_STATUS,&raw_cond);
 			{
+			float conductivity_CS3;
+			conductivity_CS3 = cl_utilities_CalConductivity(raw_cond,TS3);
+			bulk_data[3] = conductivity_CS3;								// multiplication for display purpose
+
+/************************************************			
 			float	 cond1,	cond_final, cond1x100, cond_final_X10000;
-	
-			
 			cond1 = raw_cond/100;
 			cond_final = 0.0001*cond1*cond1 + 0.032*cond1 +0.91 + 0.4;
 			cond1x100 = cond_final*100; ;
@@ -508,8 +538,7 @@ void Cl_SysStat_mean_status_update(void)
 		//	cond_final_X10000=  cond_final_X10000 * 2 + 100;
 	//		cond_comp= (cond/(1+(cl_temp3_cel-25.0)*0.020))/10;
 			avgcond = (avgcond * 5 + cond_final_X10000)/6;
-			
-				if(avgcond == 0)
+			if(avgcond == 0)
 				{
 			//		avgcond = sensordata;
 				}
@@ -518,11 +547,12 @@ void Cl_SysStat_mean_status_update(void)
 			//		avgcond =cond_final * 10 ;
 				}
 	//			bulk_data[0] = cond1x100;
-//				bulk_data[3] = avgcond;					//   chnaged on 01072017
+				bulk_data[3] = avgcond;					//   chnaged on 01072017
 		//		bulk_data[3] = cond1x100;                    //   chnaged on 01072017
 		
-				bulk_data[3] = raw_cond;
-			}
+//				bulk_data[3] = raw_cond;
+***********************************************************************/	
+		}
 		Cl_SysStat_GetSensor_Status_Query(SENSOR_ACID_COND,&sensordata);
 		{
 			#if 0

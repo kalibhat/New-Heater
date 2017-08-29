@@ -237,13 +237,13 @@
         <InterfaceName>JTAG</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>29425026</ToolNumber>
+      <ToolNumber>28014956</ToolNumber>
       <ToolName>SAM-ICE</ToolName>
     </com_atmel_avrdbg_tool_samice>
     <avrtoolinterface>JTAG</avrtoolinterface>
     <preserveEEPROM>true</preserveEEPROM>
     <ExternalProgrammingToolCommand />
-    <avrtoolserialnumber>29425026</avrtoolserialnumber>
+    <avrtoolserialnumber>28014956</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x285E0A60</avrdeviceexpectedsignature>
     <avrtoolinterfaceclock>4000000</avrtoolinterfaceclock>
   </PropertyGroup>

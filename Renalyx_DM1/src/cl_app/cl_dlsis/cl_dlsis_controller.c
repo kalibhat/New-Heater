@@ -2153,13 +2153,15 @@ Cl_ReturnCodeType Cl_Dlsis_SenddlsisData(void)
 	*/
 		Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&temp);
 		{
-							float sensordata,ftemp1,temp1;
-							sensordata = temp;
-							uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
-							res_temp_lookuptable(cal_data);
-							//	tmp3 =	(tmp3*5 + res_temp_value)/6;
-							temp1 = res_temp_value/10;
-							temp1 = temp1 - 3.1+1.4;                                  // removed offset on 02.07.17
+// 							float sensordata,ftemp1,temp1;
+// 							sensordata = temp;
+// 							uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
+// 							res_temp_lookuptable(cal_data);
+// 							//	tmp3 =	(tmp3*5 + res_temp_value)/6;
+// 							temp1 = res_temp_value/10;
+// //							temp1 = temp1 - 3.1+1.4;                                  // removed offset on 02.07.17
+// 							temp1 = temp1 - 0.4;                                  // removed offset on 02.07.17
+							temp1 = (float)temp/10;
 							avgtmp3 =(avgtmp3*5 + temp1)/6;
 							
 							

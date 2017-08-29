@@ -834,7 +834,7 @@ uint8_t DD_SET_VALVE_21_32_IO()
 			default:
 			break;
 		}
-		if (dd_valve_port_21_32 & 1<< count-17 )
+		if (dd_valve_port_21_32 & 1<< count-29 )
 		
 		{
 

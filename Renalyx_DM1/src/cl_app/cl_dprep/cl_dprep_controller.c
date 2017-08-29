@@ -528,22 +528,23 @@ Cl_ReturnCodeType Cl_dprep_controller(Cl_Mac_EventsType Cl_MacDprepEvent)
 			case EVENT_DPREP_TICK_MINUTE:
 				Cl_Dprep_ResetAlertsforReassertion();
 				Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&temp_temp3);
-				int16_t sensordata;
-				uint16_t cal_data  = (402 *100* sensordata)/(2*32768);			// resistance of PT100
-				res_temp_lookuptable(cal_data);									// temperature from look up table in 4 digits
-				temp_temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
-				temp_temp3 = temp_temp3 - 3.1 + 1.4;										// sensor offset
+// 				int16_t sensordata;
+// 				uint16_t cal_data  = (402 *100* sensordata)/(2*32768);			// resistance of PT100
+// 				res_temp_lookuptable(cal_data);									// temperature from look up table in 4 digits
+// 				temp_temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
+// //				temp_temp3 = temp_temp3 - 3.1 + 1.4;										// sensor offset
+// 				temp_temp3 = temp_temp3- 0.4;										// sensor offset
+				temp3_cel = (float)temp_temp3/100;
 				
-//					temp_temp3 = temp_temp3 * 0.803;
-					{
-						float temp1=0;
-//						calibration_tmp(temp_temp3,TS3);
-//						Cl_get_Temperature_Value(TS3_SPI, temprature_final_value_3 , &temp1);
-						temp3_cel = temp_temp3;
-					}
-					//calibration_tmp(temp_temp3,TS3);
-					//temp3_cel = temprature_final_value_3;
-					//temp3_cel = 0.0000116 * temp_temp3 *temp_temp3 + 0.0035 *temp_temp3 + 11.157;
+// 					{
+// 						float temp1=0;
+// //						calibration_tmp(temp_temp3,TS3);
+// //						Cl_get_Temperature_Value(TS3_SPI, temprature_final_value_3 , &temp1);
+// 						temp3_cel = temp_temp3;
+// 					}
+// 					//calibration_tmp(temp_temp3,TS3);
+// 					//temp3_cel = temprature_final_value_3;
+// 					//temp3_cel = 0.0000116 * temp_temp3 *temp_temp3 + 0.0035 *temp_temp3 + 11.157;
 				if((temp3_cel) > 36.8 && (temp3_cel < 37.2))
 				{
 					if( cl_temp3_37stable == true) 
@@ -1137,11 +1138,12 @@ Cl_ReturnCodeType Cl_dprep_controller(Cl_Mac_EventsType Cl_MacDprepEvent)
 							float temp1=0;
 							Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&temp_temp3);
 
-							uint16_t cal_data  = (402 *100* temp_temp3)/(2*32768);			// resistance of PT100
-							res_temp_lookuptable(cal_data);									// temperature from look up table in 4 digits
-							temp_temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
-							temp_temp3 = temp_temp3 - 3.1 + 1.4;										// sensor offset
-							temp3_cel = temp_temp3;
+// 							uint16_t cal_data  = (402 *100* temp_temp3)/(2*32768);			// resistance of PT100
+// 							res_temp_lookuptable(cal_data);									// temperature from look up table in 4 digits
+// 							temp_temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
+// 	//						temp_temp3 = temp_temp3 - 3.1 + 1.4;										// sensor offset
+// 							temp_temp3 = temp_temp3 - 0.4;										// sensor offset
+							temp3_cel = (float)temp_temp3 /100;
 							Cl_Dprep_filling_secondscounter++;
 						}
 						
@@ -1193,11 +1195,12 @@ Cl_ReturnCodeType Cl_dprep_controller(Cl_Mac_EventsType Cl_MacDprepEvent)
 							float temp1=0;
 							Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&temp_temp3);
 					
-						uint16_t cal_data  = (402 *100* temp_temp3)/(2*32768);			// resistance of PT100
-						res_temp_lookuptable(cal_data);									// temperature from look up table in 4 digits
-						temp_temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
-						temp_temp3 = temp_temp3 - 3.1 + 1.4;										// sensor offset
-						temp3_cel = temp_temp3;
+// 						uint16_t cal_data  = (402 *100* temp_temp3)/(2*32768);			// resistance of PT100
+// 						res_temp_lookuptable(cal_data);									// temperature from look up table in 4 digits
+// 						temp_temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
+// //						temp_temp3 = temp_temp3 - 3.1 + 1.4;										// sensor offset
+// //						temp_temp3 = temp_temp3 - 3.1 - 2;										// sensor offset
+						temp3_cel = (float)temp_temp3;
 						
 							Cl_Dprep_filling_secondscounter++;
 						}
@@ -2069,18 +2072,19 @@ Cl_ReturnCodeType  Cl_dprepSendAlarm(Cl_NewAlarmIdType cl_dprepalarmId )
 		{
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&cl_temp3);
 			Cl_SysStat_GetSensor_Status_Query(SENSOR_COND_STATUS,&cl_cond);
-			
 	
-			
-			uint16_t cal_data  = (402 *100* cl_temp3)/(2*32768);
-			res_temp_lookuptable(cal_data);
-			float temp = res_temp_value/100;
-			cl_temp3_cel = temp - 3.1 + 1.4;										// sensor offset 
-			
-			//temp3 = ((temp3* 4) +temp)/5;
-			
-							
-			//cl_temp3_cel = 0.0000116 * temp *temp + 0.0035 *temp + 11.157;
+// 			uint16_t cal_data  = (402 *100* cl_temp3)/(2*32768);
+// 			res_temp_lookuptable(cal_data);
+// 			float temp = res_temp_value/100;
+// //			cl_temp3_cel = temp - 3.1 + 1.4;										// sensor offset 
+// 			cl_temp3_cel = temp - 0.4;										// sensor offset 
+// 			
+// 			//temp3 = ((temp3* 4) +temp)/5;
+// 			
+// 							
+// 			//cl_temp3_cel = 0.0000116 * temp *temp + 0.0035 *temp + 11.157;
+
+		cl_temp3_cel = cl_temp3 /100;
 			
 									//	cond =(cond*5 + cond_final_cs3)/6;
 			cond =  -0.0001 * cl_cond* cl_cond  + 0.36 * cl_cond  - 38.39 ;
@@ -2300,13 +2304,16 @@ Cl_ReturnCodeType Cl_Dprep_SendPrepStateData(Cl_Console_bulkdatatype datatype)
 						Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS,&sensordata);
 						{
 							
-							float ftemp,ftemp1,temp1;
-
-							uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
-							res_temp_lookuptable(cal_data);
-							uint16_t temp = res_temp_value/10;
-							temp = temp - 3.1 + 1.4;										// sensor offset 
-							tmp3 =(tmp3*5 + temp)/6;
+// 							float ftemp,ftemp1,temp1;
+// 
+// 							uint16_t cal_data  = (402 *100* sensordata)/(2*32768);
+// 							res_temp_lookuptable(cal_data);
+// 							uint16_t temp = res_temp_value/10;
+// //							temp = temp - 3.1 + 1.4;										// sensor offset 
+// //							temp = temp - 3.1 -2;										// sensor offset 
+// //							tmp3 =(tmp3*5 + temp)/6;
+// 							tmp3 = temp - 0.4;
+							tmp3 = (float)sensordata/10;
 
 							
 						}

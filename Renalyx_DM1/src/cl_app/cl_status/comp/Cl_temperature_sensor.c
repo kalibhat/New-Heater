@@ -111,29 +111,32 @@ float temp=0,cal_data=0;
 				case TS_EVENT_100MS:
 				Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP1STATUS, &temp_val);
 				
-//				(402 *100* temp_val)/(2*32768);								// resistance of PT100
-				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
-				Temp1 = res_temp_value/100;									// Temp3 value in XX.yy format
-				Temp1 = Temp1 - 3.1 + 1.4;										// sensor offset 
+////				(402 *100* temp_val)/(2*32768);								// resistance of PT100
+//				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
+//				Temp1 = res_temp_value/100;									// Temp3 value in XX.yy format
+//				Temp1 = Temp1 - 2.5 + 0.25;										// sensor offset 
+				Temp1 = (float)temp_val /100;
 				Temp1 = (Temp1 *9 + temp_val)/10;
 				
 				Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP2STATUS, &temp_val);
-				//				(402 *100* temp_val)/(2*32768);								// resistance of PT100
-				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
-				Temp2 = res_temp_value/100;									// Temp3 value in XX.yy format
-				Temp2 = Temp2 - 2.5 + 1.2;                                            // sensor offset
-				
+// 				//				(402 *100* temp_val)/(2*32768);								// resistance of PT100
+// 				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
+// 				Temp2 = res_temp_value/100;									// Temp3 value in XX.yy format
+// 				Temp2 = Temp2 - 0.4;                                            // sensor offset
+				Temp2 = (float)temp_val /100;
 				Temp2 = (Temp2 *9 + temp_val)/10;
 				
 				Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS, &temp_val);
-																					// resistance of PT100
-				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
-				Temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
-				Temp3 = Temp3 - 3.1 + 1.4;										// sensor offset 
-				
-				
-// 				temp = temp_val * 0.8036;
-// 				calibration_tmp(temp,TS3);
+// 																					// resistance of PT100
+// 				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
+// 				Temp3 = res_temp_value/100;									// Temp3 value in XX.yy format
+// //				Temp3 = Temp3 - 3.1 + 1.4;										// sensor offset 
+// 				Temp3 = Temp3 - 0.4 ;										// sensor offset 
+// 				
+// 				
+// // 				temp = temp_val * 0.8036;
+// // 				calibration_tmp(temp,TS3);
+				Temp3 = (float)temp_val /100;
 				Temp3 =(Temp3*5 + temprature_final_value_3)/6;
 				break;
 				case TS_EVENT_5SEC:
@@ -143,10 +146,11 @@ float temp=0,cal_data=0;
 					Cl_Uint16Type test_data =0 ;
 					
 				Cl_SysStat_GetSensor_Status_Query(SENSOR_TEMP3STATUS, &data);
-				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
-				temp = res_temp_value/100;									// Temp3 value in XX.yy format
-				temp = temp - 31 + 14;										// sensor offset
-			
+// 				res_temp_lookuptable((402 *100* temp_val)/(2*32768));		// temperature from look up table in 4 digits
+// 				temp = res_temp_value/100;									// Temp3 value in XX.yy format
+// //				temp = temp - 31 + 14;										// sensor offset
+// 				temp = temp - 0.4;										// sensor offset
+				temp = (float)data /100;
 				cl_Datastreamtype cl_tdata;
 				cl_tdata.word =0;
 				cl_tdata.Twobyte = temp;

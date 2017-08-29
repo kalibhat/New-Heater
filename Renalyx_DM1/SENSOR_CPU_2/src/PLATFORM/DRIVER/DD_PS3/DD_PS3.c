@@ -17,7 +17,7 @@ void DD_PS3_INIT()   {
 	dd_spi_set_peripheral_chip_select_value(PS3_CS_N_ID);
 	dd_spi_master_transfer(&command_data_array, 1, PS3_CS_N_ID);
 	
-	for(unsigned int count=0; count<10000000; count++ )   {
+	for(unsigned int count=0; count<1000; count++ )   {
 		;
 	}
 	
@@ -31,14 +31,14 @@ void DD_PS3_INIT()   {
 	dd_spi_set_peripheral_chip_select_value(PS3_CS_N_ID);
 	dd_spi_master_transfer(&command_data_array, 5, PS3_CS_N_ID);
 	
-	for(unsigned int count=0; count<10000000; count++ )   {
+	for(unsigned int count=0; count<1000; count++ )   {
 		;
 	}
 	
 	command_data_array[0] = ADS1120_START_OR_SYNC;
 	dd_spi_set_peripheral_chip_select_value(PS3_CS_N_ID);
 	dd_spi_master_transfer(&command_data_array, 1, PS3_CS_N_ID);
-	for(unsigned int count=0; count<10000000; count++ )   {
+	for(unsigned int count=0; count<1000; count++ )   {
 		;
 	}
 }

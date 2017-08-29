@@ -53,3 +53,16 @@ Cl_ReturnCodeType cl_memset(Cl_Uint8Type* pdata, Cl_Uint8Type datasize)
 	}
 	return CL_OK;
 }
+
+float cl_utilities_CalConductivity(uint16_t raw_cond,float temperature)
+{
+			float conductivity, conductance;
+			conductance = raw_cond;// /1000; 
+//			conductivity = (raw_cond -66.67)/100;                                 // raw conductance contains conductance of fixed 150 ohm resistance
+	//		cond_final = 0.0001*cond1*cond1 + 0.032*cond1 +0.91 + 0.4;
+			conductivity = conductance * 0.9;                             // Conductance * cell constant = conductivity
+	//		conductivity = (0.0001*conductivity*conductivity + 0.032*conductivity) * 100;                          // Gopal: Need to check for offset if required based on the observations in IBP 02082017
+ 			conductivity = (conductivity/(1+(temperature  -25.0)*0.021));                    // conductivity compensated at 25 degrees using win-situ formula
+//			return conductivity;
+			return conductivity/10;
+}

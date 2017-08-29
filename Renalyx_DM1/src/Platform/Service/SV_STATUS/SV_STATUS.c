@@ -72,7 +72,7 @@ uint8_t sv_status_getdholderstatus()
 uint16_t sv_status_getsystemstatus(Sys_statusType* sensor_struct)
 {
 	//sv_sensortype sv_sensor = SV_SENSOR_NULL;
-	
+
 	Sys_statusType sensor_struct1;
 	sensor_struct1.levelswitch1	= 0;
 	sensor_struct1.FPcurrentstatus	= 1;
@@ -82,6 +82,8 @@ uint16_t sv_status_getsystemstatus(Sys_statusType* sensor_struct)
 	sensor_struct1.ps1status			= DD_CAN_READ_SENSORS(DD_CAN_SENSOR_ID1);
 	sensor_struct1.ps2status			= DD_CAN_READ_SENSORS(DD_CAN_SENSOR_ID2);
 	sensor_struct1.ps3status			= DD_CAN_READ_SENSORS(DD_CAN_SENSOR_ID3);
+
+	
 
 	
 	sensor_struct1.Temp1status			= DD_CAN_READ_SENSORS(DD_CAN_SENSOR_ID5);

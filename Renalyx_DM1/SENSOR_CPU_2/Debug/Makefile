@@ -337,8 +337,7 @@ ADDITIONAL_DEPENDENCIES:=
 
 OUTPUT_FILE_DEP:= ./makedep.mk
 
-LIB_DEP+=  \
-../src/ASF/thirdparty/CMSIS/Lib/GCC/libarm_cortexM3l_math.a
+LIB_DEP+= 
 
 LINKER_SCRIPT_DEP+=  \
 ../src/ASF/sam/utils/linker_scripts/sam3x/sam3x8/gcc/flash.ld

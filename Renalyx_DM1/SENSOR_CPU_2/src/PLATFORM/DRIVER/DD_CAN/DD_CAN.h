@@ -62,7 +62,7 @@
 #define CAN_MID_MIDvA_dd(value) ((0x1FFC0000 & ((value) << 18)))
 #define CAN_MFID_MFID_VA_dd(value)  ((0x1FFC0000 & ((value) << 18)))
 #define CAN_MCR_MDLC_dd(value) (( (0xfu << 16) & ((value) << 16)))
-#define CAN_MASK 0x7FF
+#define CAN_MASK 0x7FC
 
 
 

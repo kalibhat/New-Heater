@@ -31,9 +31,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  13 .debug_line   00016e62  00000000  00000000  0004b0a8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    000624d8  00000000  00000000  00061f0a  2**0
+ 14 .debug_str    00062514  00000000  00000000  00061f0a  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_frame  00004234  00000000  00000000  000c43e4  2**2
+ 15 .debug_frame  00004234  00000000  00000000  000c4420  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -5705,13 +5705,13 @@ PIOB->PIO_OER = 1 << 19 ; //TEST
    8218e:	e065      	b.n	8225c <main+0x500>
 							case PROP_START_OPENFILL:
 					//		startTimer1(TC0,2,TC2_IRQn,stepcount);
-								rc=180;
+								rc=170;
    82190:	4b3f      	ldr	r3, [pc, #252]	; (82290 <main+0x534>)
-   82192:	22b4      	movs	r2, #180	; 0xb4
+   82192:	22aa      	movs	r2, #170	; 0xaa
    82194:	601a      	str	r2, [r3, #0]
-								bic_rc=180;
+								bic_rc=170;
    82196:	4b37      	ldr	r3, [pc, #220]	; (82274 <main+0x518>)
-   82198:	22b4      	movs	r2, #180	; 0xb4
+   82198:	22aa      	movs	r2, #170	; 0xaa
    8219a:	601a      	str	r2, [r3, #0]
 								start_acidpump();
    8219c:	4b3d      	ldr	r3, [pc, #244]	; (82294 <main+0x538>)
@@ -5823,13 +5823,13 @@ PIOB->PIO_OER = 1 << 19 ; //TEST
 								//printf("start\n");
 								//rc=184;
 								//bic_rc=184;
- 								rc=210;
+ 								rc=195;   //273, 205 = 4 rotations per sec, 164 = 5rps, 136 =6 rps, 195 = 4.2 rps
    82226:	4b1a      	ldr	r3, [pc, #104]	; (82290 <main+0x534>)
-   82228:	22d2      	movs	r2, #210	; 0xd2
+   82228:	22c3      	movs	r2, #195	; 0xc3
    8222a:	601a      	str	r2, [r3, #0]
- 								bic_rc=210;
+ 								bic_rc=195;   
    8222c:	4b11      	ldr	r3, [pc, #68]	; (82274 <main+0x518>)
-   8222e:	22d2      	movs	r2, #210	; 0xd2
+   8222e:	22c3      	movs	r2, #195	; 0xc3
    82230:	601a      	str	r2, [r3, #0]
 							//	rc=250;
 							//	bic_rc=250;
